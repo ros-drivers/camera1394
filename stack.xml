@@ -1,0 +1,22 @@
+<stack>
+  <description brief="IEEE 1394 Digital Camera driver">
+
+    This is a ROS driver for devices supporting the IEEE 1394 Digital
+    Camera (IIDC) protocol. It supports the ROS image_pipeline, using
+    libdc1394 for device access.
+
+  </description>
+  <author>Maintained by Jack O'Quin, Ken Tossell</author>
+  <license>BSD,LGPL</license>  
+  <review status="Doc Reviewed" notes="Jan 22 2010"/>
+  <url>http://ros.org/wiki/camera1394</url>
+
+  <depend stack="common_msgs" /> <!-- sensor_msgs, diagnostic_msgs -->
+  <depend stack="driver_common" /> <!-- dynamic_reconfigure, driver_base, timestamp_tools -->
+  <depend stack="geometry" /> <!-- tf -->
+  <depend stack="image_common" /> <!-- polled_camera, camera_info_manager, image_transport, camera_calibration_parsers -->
+  <depend stack="nodelet_core" /> <!-- nodelet -->
+  <depend stack="ros" />
+  <depend stack="ros_comm" /> <!-- std_msgs, rostest, rospy, roscpp -->
+
+</stack>

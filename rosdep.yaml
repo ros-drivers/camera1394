@@ -1,0 +1,9 @@
+libraw1394-dev:
+  ubuntu: libraw1394-dev
+  fedora: libraw1394-devel
+
+libdc1394-dev:
+  ubuntu: libdc1394-22-dev
+  arch: libdc1394
+  fedora: libdc1394-devel
+  macports: libdc1394
