@@ -1,0 +1,14 @@
+			camera1394 test conditions
+
+os_environment:
+  linux:
+    - old 1394 drivers (Lucid or before)
+    - new firewire (Juju) drivers (Maverick or after)
+  macports:
+
+automated_tests:
+  unlabelled:
+    - work with no device
+  device:
+    - require any valid device attached
+

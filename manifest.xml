@@ -1,0 +1,28 @@
+<package>
+  <description brief="IEEE 1394 Digital Camera driver">
+
+    This is a ROS driver for devices supporting the IEEE 1394 Digital
+    Camera (IIDC) protocol. It supports the ROS image_pipeline, using
+    libdc1394 for device access.
+
+  </description>
+  <author>Jack O'Quin, Patrick Beeson, Nate Koenig, Andrew Howard,
+    Damien Douxchamps, Dan Dennedy, Ken Tossell</author>
+  <license>LGPL</license>
+  <review status="Doc reviewed" notes="2010-06-19"/>
+  <url>http://ros.org/wiki/camera1394</url>
+
+  <depend package="camera_info_manager"/>
+  <depend package="driver_base" />
+  <depend package="dynamic_reconfigure" />
+  <depend package="image_transport"/>
+  <depend package="nodelet" />
+  <depend package="tf"/>
+
+  <rosdep name="libdc1394-dev"/>
+
+  <export>
+    <nodelet plugin="${prefix}/camera1394_nodelet.xml"/>
+  </export>
+
+</package>
