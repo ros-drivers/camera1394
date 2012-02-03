@@ -350,6 +350,8 @@ void Camera1394::SafeCleanup()
     {
       format7_.stop();
       dc1394_capture_stop(camera_);
+      // try to power off the device (#5322):
+      dc1394_camera_set_power(camera_, DC1394_OFF);
       dc1394_camera_free(camera_);
       camera_ = NULL;
     }
