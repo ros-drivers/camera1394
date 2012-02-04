@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2009, 2010 Patrick Beeson, Jack O'Quin, Ken Tossell
+// Copyright (C) 2009, 2010, 2012 Patrick Beeson, Jack O'Quin, Ken Tossell
 //  ROS port of the Player 1394 camera driver.
 //
 // Copyright (C) 2004 Nate Koenig, Andrew Howard
@@ -162,9 +162,30 @@ bool Camera1394::findBayerMethod(const char* method)
 int Camera1394::open(camera1394::Camera1394Config &newconfig)
 {
   //////////////////////////////////////////////////////////////
-  // First, look for the camera
+  // Pad GUID (if specified) with leading zeros
   //////////////////////////////////////////////////////////////
 
+  const static size_t exact_guid_length = 16;
+  size_t guid_length = newconfig.guid.length();
+  if (guid_length != 0 && guid_length != exact_guid_length)
+      {
+        if (guid_length < exact_guid_length)
+          {
+            // pad string with leading zeros
+            newconfig.guid.insert(0, exact_guid_length - guid_length, '0');
+          }
+        else
+          {
+            ROS_ERROR_STREAM_THROTTLE(3, "Invalid GUID [" << newconfig.guid
+                                      << "] specified: " << guid_length
+                                      << " characters long.");
+          }
+      }
+
+  //////////////////////////////////////////////////////////////
+  // First, look for the camera
+  //////////////////////////////////////////////////////////////
+      
   const char *guid = newconfig.guid.c_str();  // C-style GUID for libdc1394
   int err;
   dc1394_t *d;
@@ -200,10 +221,12 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
       camera_ = dc1394_camera_new (d, list->ids[i].guid);
       if (!camera_)
 	ROS_WARN_STREAM("Failed to initialize camera with GUID "
-                        << std::hex << list->ids[i].guid);
+                        << std::setw(16) << std::setfill('0') << std::hex
+                        << list->ids[i].guid);
       else
         ROS_INFO_STREAM("Found camera with GUID "
-                        << std::hex << list->ids[i].guid);
+                        << std::setw(16) << std::setfill('0') << std::hex
+                        << list->ids[i].guid);
 
       uint32_t value[3];
       
@@ -215,8 +238,10 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
 
       if (strcmp(guid,"")==0)
         {
-          ROS_INFO_STREAM("No guid specified, using first camera found, GUID: "
-                          << std::hex << camera_->guid);
+          // pad GUID with leading zeros in message
+          ROS_INFO_STREAM("No GUID specified, using first camera found, GUID: "
+                          << std::setw(16) << std::setfill('0') << std::hex
+                          << camera_->guid);
           device_id_ = std::string(temp);
           break;
         }

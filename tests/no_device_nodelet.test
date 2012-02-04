@@ -11,7 +11,7 @@
   <!-- run the driver with a bogus GUID parameter -->
   <node pkg="nodelet" type="nodelet" name="camera1394_nodelet"
         args="standalone camera1394/driver" >
-    <param name="guid" value="00000000deadbeef" />
+    <param name="guid" value="deadbeef" />
   </node>
 
   <test test-name="nodelet_nodev_image_test"

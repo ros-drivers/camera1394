@@ -10,7 +10,7 @@
 
   <!-- run the driver with a bogus GUID parameter -->
   <node pkg="camera1394" type="camera1394_node" name="camera1394_node">
-    <param name="guid" value="00000000deadbeef" />
+    <param name="guid" value="deadbeef" />
   </node>
 
   <test test-name="no_device_image_test" pkg="rostest" type="hztest" name="nodev_image" >
