@@ -37,7 +37,7 @@
   <test test-name="nodelet_diagnostics_hz_test"
         pkg="rostest" type="hztest" name="nodelet_hztest_diag" >
     <param name="hz" value="1.0" />
-    <param name="hzerror" value="0.2" />
+    <param name="hzerror" value="0.5" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="diagnostics" />  
     <param name="wait_time" value="2.0" />  
