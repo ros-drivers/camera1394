@@ -75,13 +75,23 @@ namespace camera1394_driver
     priv_nh_(priv_nh),
     camera_nh_(camera_nh),
     camera_name_("camera"),
+    cycle_(1.0),                        // slow poll when closed
+    retries_(0),
     dev_(new camera1394::Camera1394()),
     srv_(priv_nh),
-    cycle_(1.0),                        // slow poll when closed
     cinfo_(new camera_info_manager::CameraInfoManager(camera_nh_)),
     calibration_matches_(true),
     it_(new image_transport::ImageTransport(camera_nh_)),
-    image_pub_(it_->advertiseCamera("image_raw", 1))
+    image_pub_(it_->advertiseCamera("image_raw", 1)),
+    diagnostics_(),
+    topic_diagnostics_min_freq_(0.),
+    topic_diagnostics_max_freq_(1000.),
+    topic_diagnostics_("image_raw", diagnostics_,
+		       diagnostic_updater::FrequencyStatusParam
+		       (&topic_diagnostics_min_freq_,
+			&topic_diagnostics_max_freq_, 0.1, 10),
+		       diagnostic_updater::TimeStampStatusParam
+		       ())
   {}
 
   Camera1394Driver::~Camera1394Driver()
@@ -106,55 +116,61 @@ namespace camera1394_driver
    * @param newconfig configuration parameters
    * @return true, if successful
    *
+   * @post diagnostics frequency parameters set
+   *
    * if successful:
    *   state_ is Driver::OPENED
    *   camera_name_ set to GUID string
+   *   GUID configuration parameter updated
    */
   bool Camera1394Driver::openCamera(Config &newconfig)
   {
     bool success = false;
-    int retries = 2;                    // number of retries, if open fails
-    do
-      {
-        try
-          {
-            if (0 == dev_->open(newconfig))
-              {
-                if (camera_name_ != dev_->device_id_)
-                  {
-                    camera_name_ = dev_->device_id_;
-                    if (!cinfo_->setCameraName(camera_name_))
-                      {
-                        // GUID is 16 hex digits, which should be valid.
-                        // If not, use it for log messages anyway.
-                        ROS_WARN_STREAM("[" << camera_name_
-                                        << "] name not valid"
-                                        << " for camera_info_manger");
-                      }
-                  }
-                ROS_INFO_STREAM("[" << camera_name_ << "] opened: "
-                                << newconfig.video_mode << ", "
-                                << newconfig.frame_rate << " fps, "
-                                << newconfig.iso_speed << " Mb/s");
-                state_ = Driver::OPENED;
-                calibration_matches_ = true;
-                success = true;
-              }
 
-          }
-        catch (camera1394::Exception& e)
+    try
+      {
+        if (0 == dev_->open(newconfig))
           {
-            state_ = Driver::CLOSED;    // since the open() failed
-            if (retries > 0)
-              ROS_WARN_STREAM("[" << camera_name_
-                              << "] exception opening device (retrying): "
-                              << e.what());
-            else
-              ROS_ERROR_STREAM("[" << camera_name_
-                               << "] device open failed: " << e.what());
+            if (camera_name_ != dev_->device_id_)
+              {
+                camera_name_ = dev_->device_id_;
+                if (!cinfo_->setCameraName(camera_name_))
+                  {
+                    // GUID is 16 hex digits, which should be valid.
+                    // If not, use it for log messages anyway.
+                    ROS_WARN_STREAM("[" << camera_name_
+                                    << "] name not valid"
+                                    << " for camera_info_manger");
+                  }
+              }
+            ROS_INFO_STREAM("[" << camera_name_ << "] opened: "
+                            << newconfig.video_mode << ", "
+                            << newconfig.frame_rate << " fps, "
+                            << newconfig.iso_speed << " Mb/s");
+            state_ = Driver::OPENED;
+            calibration_matches_ = true;
+            newconfig.guid = camera_name_; // update configuration parameter
+            retries_ = 0;
+            success = true;
           }
       }
-    while (!success && --retries >= 0);
+    catch (camera1394::Exception& e)
+      {
+        state_ = Driver::CLOSED;    // since the open() failed
+        if (retries_++ > 0)
+          ROS_DEBUG_STREAM("[" << camera_name_
+                           << "] exception opening device (retrying): "
+                           << e.what());
+        else
+          ROS_ERROR_STREAM("[" << camera_name_
+                           << "] device open failed: " << e.what());
+      }
+
+    // update diagnostics parameters
+    diagnostics_.setHardwareID(camera_name_);
+    double delta = newconfig.frame_rate * 0.1; // allow 10% error margin
+    topic_diagnostics_min_freq_ = newconfig.frame_rate - delta;
+    topic_diagnostics_max_freq_ = newconfig.frame_rate + delta;
 
     return success;
   }
@@ -174,8 +190,12 @@ namespace camera1394_driver
     if (!reconfiguring_)
       {
         boost::mutex::scoped_lock lock(mutex_);
+        if (state_ == Driver::CLOSED)
+          {
+            openCamera(config_);        // open with current configuration
+          }
         do_sleep = (state_ == Driver::CLOSED);
-        if (!do_sleep)
+        if (!do_sleep)                  // openCamera() succeeded?
           {
             // driver is open, read the next image still holding lock
             sensor_msgs::ImagePtr image(new sensor_msgs::Image);
@@ -184,7 +204,10 @@ namespace camera1394_driver
                 publish(image);
               }
           }
-      }
+      } // release mutex lock
+
+    // Always run the diagnostics updater: no lock required.
+    diagnostics_.update();
 
     if (do_sleep)
       {
@@ -201,7 +224,7 @@ namespace camera1394_driver
   void Camera1394Driver::publish(const sensor_msgs::ImagePtr &image)
   {
     image->header.frame_id = config_.frame_id;
-      
+
     // get current CameraInfo data
     sensor_msgs::CameraInfoPtr
       ci(new sensor_msgs::CameraInfo(cinfo_->getCameraInfo()));
@@ -237,11 +260,13 @@ namespace camera1394_driver
     ci->header.frame_id = config_.frame_id;
     ci->header.stamp = image->header.stamp;
 
-    // @todo log a warning if (filtered) time since last published
-    // image is not reasonably close to configured frame_rate
-	  
     // Publish via image_transport
     image_pub_.publish(image, ci);
+
+    // Notify diagnostics that a message has been published. That will
+    // generate a warning if messages are not published at nearly the
+    // configured frame_rate.
+    topic_diagnostics_.tick(image->header.stamp);
   }
 
   /** Read camera data.
@@ -301,12 +326,7 @@ namespace camera1394_driver
     if (state_ == Driver::CLOSED)
       {
         // open with new values
-        if (openCamera(newconfig))
-          {
-            // update GUID string parameter
-            // TODO move into dev_->open()
-            newconfig.guid = camera_name_;
-          }
+        openCamera(newconfig);
       }
 
     if (config_.camera_info_url != newconfig.camera_info_url)

@@ -13,6 +13,7 @@
   <url>http://ros.org/wiki/camera1394</url>
 
   <depend package="camera_info_manager"/>
+  <depend package="diagnostic_updater" />
   <depend package="driver_base" />
   <depend package="dynamic_reconfigure" />
   <depend package="image_transport"/>

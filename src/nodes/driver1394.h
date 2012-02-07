@@ -39,6 +39,8 @@
 
 #include <ros/ros.h>
 #include <camera_info_manager/camera_info_manager.h>
+#include <diagnostic_updater/diagnostic_updater.h>
+#include <diagnostic_updater/publisher.h>
 #include <driver_base/driver.h>
 #include <dynamic_reconfigure/server.h>
 #include <image_transport/image_transport.h>
@@ -81,12 +83,14 @@ private:
   /** Non-recursive mutex for serializing callbacks with device polling. */
   boost::mutex mutex_;
 
+  /** driver state variables */
   volatile driver_base::Driver::state_t state_; // current driver state
-  volatile bool reconfiguring_;        // true when reconfig() running
-
+  volatile bool reconfiguring_;         // true when reconfig() running
   ros::NodeHandle priv_nh_;             // private node handle
   ros::NodeHandle camera_nh_;           // camera name space handle
   std::string camera_name_;             // camera name
+  ros::Rate cycle_;                     // polling rate when closed
+  uint32_t retries_;                    // count of openCamera() retries
 
   /** libdc1394 camera device interface */
   boost::shared_ptr<camera1394::Camera1394> dev_;
@@ -94,7 +98,6 @@ private:
   /** dynamic parameter configuration */
   camera1394::Camera1394Config config_;
   dynamic_reconfigure::Server<camera1394::Camera1394Config> srv_;
-  ros::Rate cycle_;                     // polling rate when closed
 
   /** camera calibration information */
   boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_;
@@ -103,6 +106,12 @@ private:
   /** image transport interfaces */
   boost::shared_ptr<image_transport::ImageTransport> it_;
   image_transport::CameraPublisher image_pub_;
+
+  /** diagnostics updater */
+  diagnostic_updater::Updater diagnostics_;
+  double topic_diagnostics_min_freq_;
+  double topic_diagnostics_max_freq_;
+  diagnostic_updater::TopicDiagnostic topic_diagnostics_;
 
 }; // end class Camera1394Driver
 
