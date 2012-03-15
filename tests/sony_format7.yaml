@@ -5,6 +5,7 @@ video_mode: format7_mode0
 frame_id: sony
 iso_speed: 800
 camera_info_url: package://camera1394/tests/sony_calibration.yaml
+frame_rate: 30                  # for diagnostics
 reset_on_open: false
 bayer_pattern: gbrg
 
