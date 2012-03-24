@@ -1,11 +1,11 @@
 <!-- -*- mode: XML -*- -->
 
-<!-- Minimal IEEE1394 digital camera driver test.
+<!-- IEEE1394 format7 digital camera test.
 
-     Depends on having a real IIDC-compliant camera attached.
+     Depends on having a specific Sony XCD-SX90CR camera attached.
 
-     Tests that the driver can connect to the first device on the bus
-     and publish both images and camera info at the default rate of 15
+     Tests that the driver can connect to the camera in format7 mode0,
+     and publish both images and camera info at approximately 30
      frames per second.
 
      Also tests that diagnostics are published once a second.
