@@ -90,8 +90,7 @@ namespace camera1394_driver
 		       diagnostic_updater::FrequencyStatusParam
 		       (&topic_diagnostics_min_freq_,
 			&topic_diagnostics_max_freq_, 0.1, 10),
-		       diagnostic_updater::TimeStampStatusParam
-		       ())
+		       diagnostic_updater::TimeStampStatusParam())
   {}
 
   Camera1394Driver::~Camera1394Driver()
