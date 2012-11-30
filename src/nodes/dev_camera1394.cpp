@@ -217,42 +217,51 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
   char* temp=(char*)malloc(1024*sizeof(char));
   for (unsigned i=0; i < list->num; i++)
     {
-      // Create a camera
-      camera_ = dc1394_camera_new (d, list->ids[i].guid);
-      if (!camera_)
-	ROS_WARN_STREAM("Failed to initialize camera with GUID "
-                        << std::setw(16) << std::setfill('0') << std::hex
-                        << list->ids[i].guid);
-      else
-        ROS_INFO_STREAM("Found camera with GUID "
-                        << std::setw(16) << std::setfill('0') << std::hex
-                        << list->ids[i].guid);
-
       uint32_t value[3];
       
-      value[0]= camera_->guid & 0xffffffff;
-      value[1]= (camera_->guid >>32) & 0x000000ff;
-      value[2]= (camera_->guid >>40) & 0xfffff;
+      value[0]= list->ids[i].guid & 0xffffffff;
+      value[1]= (list->ids[i].guid >>32) & 0x000000ff;
+      value[2]= (list->ids[i].guid >>40) & 0xfffff;
       
       sprintf(temp,"%06x%02x%08x", value[2], value[1], value[0]);
 
-      if (strcmp(guid,"")==0)
+      if (guid[0] == '\0')
         {
           // pad GUID with leading zeros in message
           ROS_INFO_STREAM("No GUID specified, using first camera found, GUID: "
                           << std::setw(16) << std::setfill('0') << std::hex
-                          << camera_->guid);
-          device_id_ = std::string(temp);
-          break;
+                          << list->ids[i].guid);
         }
+      else
+	{
+	  ROS_WARN("Comparing %s to %s", guid, temp);
+	  if (strcmp(temp, guid))
+	    {
+	      ROS_WARN("GUIDs do not match");
+	      continue;
+	    }
+	}
 
-      ROS_DEBUG("Comparing %s to %s",guid,temp);
-      if (strcmp(temp,guid)==0)
-        {
-          device_id_=guid;
-          break;
-        }
-      SafeCleanup();
+      // Create a camera
+      camera_ = dc1394_camera_new (d, list->ids[i].guid);
+      if (!camera_)
+	{
+	  ROS_WARN_STREAM("Failed to initialize camera with GUID "
+			  << std::setw(16) << std::setfill('0') << std::hex
+			  << list->ids[i].guid);
+
+	  SafeCleanup();
+	  break;
+	}
+      else
+	{
+	  ROS_INFO_STREAM("Found camera with GUID "
+			  << std::setw(16) << std::setfill('0') << std::hex
+			  << list->ids[i].guid);
+
+	  device_id_ = std::string(temp);
+	  break;
+	}
     }
   free (temp);
   dc1394_camera_free_list (list);
