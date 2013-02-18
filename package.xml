@@ -24,7 +24,8 @@
   <url type="repository">https://github.com/ros-drivers/camera1394</url>
 
   <!-- broken under catkin:
-  <review status="Doc reviewed" notes="2010-06-19"/>
+  <review status="Doc Reviewed" notes="2010-01-22"/>
+  <review status="Doc Reviewed" notes="2010-06-19"/>
   -->
 
   <buildtool_depend>catkin</buildtool_depend>
