@@ -26,13 +26,13 @@ find_package(catkin REQUIRED
   image_transport
   nodelet
   roscpp
+  roslib
   sensor_msgs
   tf)
 
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)
 catkin_package(LIBRARIES ${PROJECT_NAME})
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencfg)
 
 # build package sources
 add_subdirectory(src/nodes)
