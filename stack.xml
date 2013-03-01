@@ -16,6 +16,7 @@
   <depend stack="geometry" /> <!-- tf -->
   <depend stack="image_common" /> <!-- camera_info_manager, image_transport -->
   <depend stack="nodelet_core" /> <!-- nodelet -->
+  <depend stack="ros_comm" />
   <depend stack="ros" />
 
 </stack>
