@@ -1,28 +1,32 @@
 # common source files for both node and nodelet driver interfaces
-set(DRIVER_SOURCES 
+set(CAMERA1394_SOURCES 
   driver1394.cpp
   dev_camera1394.cpp
   features.cpp
   format7.cpp
   modes.cpp)
 
+## The following used to be necessary rosbuild on Mac OSX.
+## No telling what, if anything, is needed with catkin.
+
 # Mac OSX requires extra linker parameters
-if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  set(DC1394 dc1394 "-framework CoreServices")
-else(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  set(DC1394 dc1394)
-endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+#if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+#  set(DC1394 dc1394 "-framework CoreServices")
+#else(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+#  set(DC1394 dc1394)
+#endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 # build and install the node
-add_executable(camera1394_node camera1394_node.cpp ${DRIVER_SOURCES})
-target_link_libraries(camera1394_node ${DC1394})
+add_executable(camera1394_node camera1394_node.cpp ${CAMERA1394_SOURCES})
+target_link_libraries(camera1394_node ${catkin_LIBS} ${DC1394_LIBS})
 install(TARGETS camera1394_node
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        COMPONENT main
 )
 
 # build and install the nodelet
-add_library(camera1394_nodelet nodelet.cpp ${DRIVER_SOURCES})
-target_link_libraries(camera1394_nodelet ${DC1394})
+add_library(camera1394_nodelet nodelet.cpp ${CAMERA1394_SOURCES})
+target_link_libraries(camera1394_nodelet ${catkin_LIBS} ${DC1394_LIBS})
 install(TARGETS camera1394_nodelet
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )

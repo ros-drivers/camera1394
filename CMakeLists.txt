@@ -1,24 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(camera1394)
 
-find_package(catkin REQUIRED)
-find_package(Boost REQUIRED COMPONENTS thread)
-
-# Resolve system dependency on libdc1394, which apparently does not
-# provide a CMake find_package() module.
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(DC1394_PKGCONF libdc1394-2)
-find_path(DC1394_INCLUDE_DIR
-  NAMES dc1394.h
-  PATHS ${DC1394_PKGCONF_INCLUDE_DIRS}
-)
-find_library(DC1394_LIBRARY
-  NAMES dc1394
-  PATHS ${DC1394_PKGCONF_LIBRARY_DIRS}
-)
-
-# ROS package dependencies
-find_package(catkin REQUIRED
+# Find catkin macros and libraries, also other catkin packages.
+find_package(catkin REQUIRED COMPONENTS
   camera_info_manager
   diagnostic_updater
   driver_base
@@ -29,6 +13,22 @@ find_package(catkin REQUIRED
   roslib
   sensor_msgs
   tf)
+
+# This driver uses Boost threads
+find_package(Boost REQUIRED COMPONENTS thread)
+
+# Resolve system dependency on libdc1394, which apparently does not
+# provide a CMake find_package() module.
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DC1394_PKGCONF REQUIRED libdc1394-2)
+find_path(DC1394_INCLUDE_DIR
+  NAMES dc1394.h
+  PATHS ${DC1394_PKGCONF_INCLUDE_DIRS}
+)
+find_library(DC1394_LIBRARY
+  NAMES dc1394
+  PATHS ${DC1394_PKGCONF_LIBRARY_DIRS}
+)
 
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)
