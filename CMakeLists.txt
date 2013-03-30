@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
   roscpp
   roslib
+  rostest
   sensor_msgs
   tf)
 
@@ -50,8 +51,8 @@ add_subdirectory(src/nodes)
 #
 
 # unit tests are broken in catkin:
-#add_rostest(tests/no_device_node.test)
-#add_rostest(tests/no_device_nodelet.test)
+add_rostest(tests/no_device_node.test)
+add_rostest(tests/no_device_nodelet.test)
 
 #add_rostest_labeled(device tests/camera_node_hz.test)
 #add_rostest_labeled(device tests/camera_nodelet_hz.test)
