@@ -40,19 +40,17 @@ add_subdirectory(src/nodes)
 
 # driver unit tests
 #
-# $ROS_BUILD_TEST_LABEL controls which label "make test" runs
+#  * When -DDEVICE_TEST=true is configured: run tests that require
+#    some real 1394 camera to be attached.
 #
-#  * if unset, all tests run
-#
-#  * tests labelled "device" require any real camera
-#
-#  * only unlabelled tests or those labelled "hudson" automatically
-#    run on the ROS build machines
+#  * Otherwise, run only tests that require no attached camera, as is
+#    done on the ROS build machines.
 #
 
-# unit tests are broken in catkin:
+if (${DEVICE_TEST})
+  add_rostest(tests/camera_node_hz.test)
+  add_rostest(tests/camera_nodelet_hz.test)
+endif (${DEVICE_TEST})
+
 add_rostest(tests/no_device_node.test)
 add_rostest(tests/no_device_nodelet.test)
-
-#add_rostest_labeled(device tests/camera_node_hz.test)
-#add_rostest_labeled(device tests/camera_nodelet_hz.test)
