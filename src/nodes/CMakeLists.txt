@@ -17,16 +17,20 @@ set(CAMERA1394_SOURCES
 #endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 # build and install the node
-add_executable(camera1394_node camera1394_node.cpp ${CAMERA1394_SOURCES})
-target_link_libraries(camera1394_node ${catkin_LIBS} ${DC1394_LIBS})
+add_executable(camera1394_node
+  camera1394_node.cpp ${CAMERA1394_SOURCES})
+target_link_libraries(camera1394_node
+  ${catkin_LIBRARIES} ${DC1394_LIBRARY})
 install(TARGETS camera1394_node
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         COMPONENT main
 )
 
 # build and install the nodelet
-add_library(camera1394_nodelet nodelet.cpp ${CAMERA1394_SOURCES})
-target_link_libraries(camera1394_nodelet ${catkin_LIBS} ${DC1394_LIBS})
+add_library(camera1394_nodelet
+  nodelet.cpp ${CAMERA1394_SOURCES})
+target_link_libraries(camera1394_nodelet
+  ${catkin_LIBRARIES} ${DC1394_LIBRARY})
 install(TARGETS camera1394_nodelet
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
