@@ -86,6 +86,7 @@ Change history
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
+.. _`#4396`: https://code.ros.org/trac/ros-pkg/ticket/4396
 .. _`#4631`: https://code.ros.org/trac/ros-pkg/ticket/4631
 .. _`#4659`: https://code.ros.org/trac/ros-pkg/ticket/4659
 .. _`#4696`: https://code.ros.org/trac/ros-pkg/ticket/4696
