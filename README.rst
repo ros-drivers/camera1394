@@ -7,14 +7,14 @@ using libdc1394_ for device access.
 
 This package has no released code API.
 
-.. note:: 
+**Warning**::
 
-       The **master** branch normally contains code being tested for
-       the next ROS release.  It will not always work with previous
-       releases.  Sometimes, it may not work at all.
+  The **master** branch normally contains code being tested for
+  the next ROS release.  It will not always work with previous
+  releases.  Sometimes, it may not work at all.
 
-So, if you want to build for Groovy, check out the **groovy-devel**
-branch, not **master**.
+  So, if you want to build for Groovy, check out the
+  **groovy-devel** branch, not **master**.
 
 .. _Camera1394: http://www.ros.org/wiki/camera1394
 .. _image_pipeline: http://www.ros.org/wiki/image_pipeline
