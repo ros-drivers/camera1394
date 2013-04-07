@@ -1,29 +1,30 @@
 Change history
 ==============
 
-1.8.1 Groovy (2013-03-01)
--------------------------
+1.8.1 (2013-03-01)
+------------------
 
  * Fix rostest dependency problem with Groovy build.
 
-1.8.0 Fuerte (2012-03-14)
--------------------------
+1.8.0 (2012-03-14)
+------------------
 
-This version was also released in Groovy.
-
+ * ROS Fuerte, later released to Groovy.
  * Power off the camera on shutdown (`#5322`_).
  * Provide leading zeros to GUID when needed (`#5350`_).
- * Add diagnostics report on actual camera frame rate (`#5292`_). Thanks to Thomas Moulard for this enhancement.
+ * Add diagnostics report on actual camera frame rate
+   (`#5292`_). Thanks to Thomas Moulard for this enhancement.
 
-1.7.0 Fuerte Alpha (2011-12-14)
--------------------------------
+1.7.0 (2011-12-14)
+------------------
 
  * camera1394 package becomes a unary stack, no longer part of
-camera_drivers.
+   camera_drivers.
 
 1.6.0 (2011-07-20)
 ------------------
 
+ * ROS Electric.
  * Handle AVT Guppy F036C in format7 mode. That device does not return
    a valid color filter. Use the bayer_pattern parameter for any
    device not providing one (`#5063`_).
@@ -46,6 +47,7 @@ camera_drivers.
 1.4.0 (2011-01-31)
 ------------------
 
+ * ROS Diamondback.
  * Add nodelet version of driver.
  * Add IIDC Format7 support (`#4222`_), thanks to Ken Tossell.
  * Format7 binning and ROI comply with REP 104.
@@ -59,10 +61,34 @@ camera_drivers.
  * Better support for Mac OS X (`#4659`_).
  * Re-licensed under LGPL.
 
+1.2.8 (2011-02-09)
+------------------
+
+ * Fixes for Mac OS X install and build (`#4659`_).
+
+1.2.5 (2010-10-28)
+------------------
+
+ * Provide new retry_on_open parameter (default true). Set it false
+   for devices like Videre STH-DCSG-VARX-C, which does not tolerate
+   resetting (`#4396`_).
+
+1.2.0 (2010-07-23)
+------------------
+
+ * ROS Cturtle.
+ * Initial camera1394 package, released to Cturtle as part of the
+   camera_drivers stack.
+ * Retry camera open, if it fails initially (`#4251`_).
+ * Fix libdc1394 debayer frames memory management (`#4261`_).
+
 
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
+.. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
+.. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
 .. _`#4631`: https://code.ros.org/trac/ros-pkg/ticket/4631
 .. _`#4659`: https://code.ros.org/trac/ros-pkg/ticket/4659
+.. _`#4696`: https://code.ros.org/trac/ros-pkg/ticket/4696
 .. _`#4725`: https://code.ros.org/trac/ros-pkg/ticket/4725
 .. _`#4735`: https://code.ros.org/trac/ros-pkg/ticket/4735
 .. _`#4736`: https://code.ros.org/trac/ros-pkg/ticket/4736

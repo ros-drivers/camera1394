@@ -1,24 +1,22 @@
-camera1394
-==========
+Overview
+========
 
-ROS driver for devices supporting the IEEE 1394 Digital Camera
-(IIDC) protocol. Supports the ROS image_pipeline_, using libdc1394_
-for device access.
-
-.. note:: 
-
-       During the ROS Hydro development cycle the master branch is
-       being migrated to catkin (issue_1_).  If you want to build for
-       Groovy, use the ``groovy-devel`` branch, with rosmake.
-
-.. _image_pipeline: http://www.ros.org/wiki/image_pipeline
-.. _libdc1394: http://damien.douxchamps.net/ieee1394/libdc1394/
-.. _issue_1: https://github.com/ros-drivers/camera1394/issues/1
-
-
-API
-___
+Camera1394_ is a ROS_ driver for devices supporting the IEEE 1394
+Digital Camera (IIDC) protocol. It supports the ROS image_pipeline_,
+using libdc1394_ for device access.
 
 This package has no released code API.
 
-ROS documentation: http://www.ros.org/wiki/camera1394
+.. warning:: 
+
+       The **master** branch normally contains code being tested for
+       the next ROS release.  It will not always work with previous
+       releases.  Sometimes, it may not work at all.
+
+So, if you want to build for Groovy, check out the **groovy-devel**
+branch, not **master**.
+
+.. _Camera1394: http://www.ros.org/wiki/camera1394
+.. _image_pipeline: http://www.ros.org/wiki/image_pipeline
+.. _libdc1394: http://damien.douxchamps.net/ieee1394/libdc1394/
+.. _ROS: http://www.ros.org
