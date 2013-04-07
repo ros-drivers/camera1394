@@ -7,7 +7,7 @@ using libdc1394_ for device access.
 
 This package has no released code API.
 
-.. warning:: 
+.. note:: 
 
        The **master** branch normally contains code being tested for
        the next ROS release.  It will not always work with previous
