@@ -43,6 +43,9 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>tf</build_depend>
 
+  <!-- this *should* be a test_depend -->
+  <build_depend>rostest</build_depend>
+
   <run_depend>boost</run_depend>
   <run_depend>camera_info_manager</run_depend>
   <run_depend>diagnostic_updater</run_depend>
@@ -54,7 +57,6 @@
   <run_depend>roslib</run_depend>
   <run_depend>tf</run_depend>
 
-  <test_depend>rostest</test_depend>
 
   <export>
     <nodelet plugin="${prefix}/camera1394_nodelet.xml"/>
