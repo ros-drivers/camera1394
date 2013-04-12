@@ -1,6 +1,13 @@
 Change history
 ==============
 
+1.9.0 (2013-04-12)
+------------------
+
+ * ROS Hydro.
+ * Move official source to https://github.com/ros-drivers/camera1394
+ * Convert to catkin build system (`#1`_).
+
 1.8.1 (2013-03-01)
 ------------------
 
@@ -83,6 +90,7 @@ Change history
  * Fix libdc1394 debayer frames memory management (`#4261`_).
 
 
+.. _`#1`: https://github.com/ros-drivers/camera1394/issues/1
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
