@@ -33,7 +33,6 @@ find_library(DC1394_LIBRARY
 
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)
-catkin_package(LIBRARIES ${PROJECT_NAME})
 
 # build package sources
 add_subdirectory(src/nodes)
