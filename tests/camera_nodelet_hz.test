@@ -22,7 +22,7 @@
     <param name="hzerror" value="0.5" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="camera/image_raw" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
   <test test-name="nodelet_camera_info_hz_test"
@@ -31,7 +31,7 @@
     <param name="hzerror" value="0.5" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="camera/camera_info" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
   <test test-name="nodelet_diagnostics_hz_test"
@@ -40,7 +40,7 @@
     <param name="hzerror" value="0.5" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="diagnostics" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
 </launch>

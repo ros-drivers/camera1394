@@ -19,7 +19,7 @@
     <param name="hzerror" value="0.0" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="camera/image_raw" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
   <test test-name="no_device_info_test"
@@ -28,7 +28,7 @@
     <param name="hzerror" value="0.0" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="camera/camera_info" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
   <test test-name="no_device_diagnostics_test"
@@ -37,7 +37,7 @@
     <param name="hzerror" value="0.5" />
     <param name="test_duration" value="10.0" />    
     <param name="topic" value="diagnostics" />  
-    <param name="wait_time" value="2.0" />  
+    <param name="wait_time" value="5.0" />  
   </test>
 
 </launch>
