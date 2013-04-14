@@ -1,6 +1,11 @@
 Change history
 ==============
 
+1.9.1 (2013-04-14)
+------------------
+
+ * Remove roslib import from dynamic reconfigure script.
+
 1.9.0 (2013-04-12)
 ------------------
 
