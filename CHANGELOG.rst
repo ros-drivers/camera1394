@@ -1,6 +1,12 @@
 Change history
 ==============
 
+1.9.2 (2013-05-13)
+------------------
+
+ * Add ``catkin_package()`` call, needed to install ``package.xml`` (`#6`_).
+ * Clean up build to better comply with recommended catkin practices.
+
 1.9.1 (2013-04-14)
 ------------------
 
@@ -96,6 +102,7 @@ Change history
 
 
 .. _`#1`: https://github.com/ros-drivers/camera1394/issues/1
+.. _`#6`: https://github.com/ros-drivers/camera1394/issues/6
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261

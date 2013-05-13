@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   nodelet
   roscpp
-  roslib
   rostest
   sensor_msgs
   tf)
@@ -33,6 +32,17 @@ find_library(DC1394_LIBRARY
 
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)
+
+catkin_package(CATKIN_DEPENDS
+                 camera_info_manager
+                 diagnostic_updater
+                 dynamic_reconfigure
+                 image_transport
+                 nodelet
+                 roscpp
+                 tf
+               DEPENDS Boost DC1394_LIBRARY
+               LIBRARIES src/nodes/camera1394_nodelet)
 
 # build package sources
 add_subdirectory(src/nodes)
