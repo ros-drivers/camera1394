@@ -1,11 +1,11 @@
 Change history
 ==============
 
-1.9.3 (forthcoming)
+1.9.3 (2013-06-05)
 -------------------
 
- * Add Pan Control feature (`#7`_), thanks to Josep Bosch, Universitat
-   de Girona.
+ * Add Pan Control feature (`#7`_), works with Point Grey Ladybug 3.
+   Thanks to Josep Bosch, Universitat de Girona.
 
 1.9.2 (2013-05-13)
 ------------------
