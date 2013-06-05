@@ -158,6 +158,8 @@ bool Features::initialize(Config *newconfig)
             &newconfig->auto_hue, &newconfig->hue);
   configure(DC1394_FEATURE_IRIS,
             &newconfig->auto_iris, &newconfig->iris);
+  configure(DC1394_FEATURE_PAN,
+            &newconfig->auto_pan, &newconfig->pan);
   configure(DC1394_FEATURE_SATURATION,
             &newconfig->auto_saturation, &newconfig->saturation);
   configure(DC1394_FEATURE_SHARPNESS,
@@ -168,8 +170,6 @@ bool Features::initialize(Config *newconfig)
             &newconfig->white_balance_BU, &newconfig->white_balance_RV);
   configure(DC1394_FEATURE_ZOOM,
             &newconfig->auto_zoom, &newconfig->zoom);
-  configure(DC1394_FEATURE_PAN,
-            &newconfig->auto_pan, &newconfig->pan);
 
   // save configured values
   oldconfig_ = *newconfig;
@@ -211,6 +211,9 @@ void Features::reconfigure(Config *newconfig)
   updateIfChanged(DC1394_FEATURE_IRIS,
                   oldconfig_.auto_iris, &newconfig->auto_iris,
                   oldconfig_.iris, &newconfig->iris);
+  updateIfChanged(DC1394_FEATURE_PAN,
+                  oldconfig_.auto_pan, &newconfig->auto_pan,
+ 		  oldconfig_.pan, &newconfig->pan);
   updateIfChanged(DC1394_FEATURE_SATURATION,
                   oldconfig_.auto_saturation, &newconfig->auto_saturation,
                   oldconfig_.saturation, &newconfig->saturation);
@@ -229,9 +232,6 @@ void Features::reconfigure(Config *newconfig)
   updateIfChanged(DC1394_FEATURE_ZOOM,
                   oldconfig_.auto_zoom, &newconfig->auto_zoom,
  		  oldconfig_.zoom, &newconfig->zoom);
-  updateIfChanged(DC1394_FEATURE_PAN,
-                  oldconfig_.auto_pan, &newconfig->auto_pan,
- 		  oldconfig_.pan, &newconfig->pan);
 
   // save modified values
   oldconfig_ = *newconfig;
