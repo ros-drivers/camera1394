@@ -1,6 +1,6 @@
 <package>
   <name>camera1394</name>
-  <version>1.9.2</version>
+  <version>1.9.3</version>
 
   <description>
     ROS driver for devices supporting the IEEE 1394 Digital Camera

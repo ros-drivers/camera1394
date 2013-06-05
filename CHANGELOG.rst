@@ -1,6 +1,12 @@
 Change history
 ==============
 
+1.9.3 (forthcoming)
+-------------------
+
+ * Add Pan Control feature (`#7`_), thanks to Josep Bosch, Universitat
+   de Girona.
+
 1.9.2 (2013-05-13)
 ------------------
 
@@ -103,6 +109,7 @@ Change history
 
 .. _`#1`: https://github.com/ros-drivers/camera1394/issues/1
 .. _`#6`: https://github.com/ros-drivers/camera1394/issues/6
+.. _`#7`: https://github.com/ros-drivers/camera1394/issues/7
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
