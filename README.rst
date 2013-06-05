@@ -10,11 +10,11 @@ This package has no released code API.
 **Warning**::
 
   The master branch normally contains code being tested for the next
-  ROS release.  It will not always work with previous releases.
+  ROS release.  It will not always work with all previous releases.
   Sometimes, it may not work at all.
 
-  So, to build for Groovy, check out the groovy-devel branch instead
-  of master.
+The current master works with Hydro and Groovy.  To build for Fuerte,
+check out the fuerte-devel branch instead of master.
 
 .. _Camera1394: http://www.ros.org/wiki/camera1394
 .. _image_pipeline: http://www.ros.org/wiki/image_pipeline
