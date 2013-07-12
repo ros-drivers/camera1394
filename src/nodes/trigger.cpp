@@ -1,0 +1,372 @@
+/*********************************************************************
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2013 Boris Gromov, BioRobotics Lab at Korea Tech
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the author nor other contributors may be
+ *     used to endorse or promote products derived from this software
+ *     without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *********************************************************************/
+
+#include <ros/ros.h>
+#include "trigger.h"
+
+/** @file
+
+ @brief libdc1394 triggering modes interfaces
+
+ @author Boris Gromov
+ */
+
+////////////////////////////////////////////////////////////////
+// static data and functions:
+////////////////////////////////////////////////////////////////
+namespace Trigger
+{
+// driver parameter names, corresponding to DC1394 trigger modes
+static const std::string trigger_mode_names_[DC1394_TRIGGER_MODE_NUM] = {"mode_0", "mode_1", "mode_2", "mode_3", "mode_4",
+                                                                         "mode_5", "mode_14", "mode_15", };
+
+/** Return driver parameter name of DC1394 trigger_mode.
+ *
+ *  @param mode DC1394 trigger mode number
+ *  @return corresponding parameter name ("" if not a valid mode)
+ */
+inline const std::string triggerModeName(dc1394trigger_mode_t mode)
+{
+  if (mode >= DC1394_TRIGGER_MODE_MIN && mode <= DC1394_TRIGGER_MODE_MAX)
+    return trigger_mode_names_[mode - DC1394_TRIGGER_MODE_MIN];
+  else
+    return "";
+}
+
+/// driver parameter names, corresponding to DC1394 trigger sources
+static const std::string trigger_source_names_[DC1394_TRIGGER_SOURCE_NUM] = {"source_0", "source_1", "source_2",
+                                                                             "source_3", "source_software", };
+
+/** Return driver parameter name of DC1394 trigger_source.
+ *
+ *  @param mode DC1394 trigger source number
+ *  @return corresponding parameter name ("" if not a valid mode)
+ */
+inline const std::string triggerSourceName(dc1394trigger_source_t source)
+{
+  if (source >= DC1394_TRIGGER_SOURCE_MIN && source <= DC1394_TRIGGER_SOURCE_MAX)
+    return trigger_source_names_[source - DC1394_TRIGGER_SOURCE_MIN];
+  else
+    return "";
+}
+
+/// driver parameter names, corresponding to DC1394 trigger sources
+static const std::string trigger_polarity_names_[DC1394_TRIGGER_ACTIVE_NUM] = {"active_low", "active_high", };
+
+/** Return driver parameter name of DC1394 trigger_polarity.
+ *
+ *  @param mode DC1394 trigger polarity
+ *  @return corresponding parameter name ("" if not a valid mode)
+ */
+inline const std::string triggerPolarityName(dc1394trigger_polarity_t polarity)
+{
+  if (polarity >= DC1394_TRIGGER_ACTIVE_MIN && polarity <= DC1394_TRIGGER_ACTIVE_MAX)
+    return trigger_polarity_names_[polarity - DC1394_TRIGGER_ACTIVE_MIN];
+  else
+    return "";
+}
+
+////////////////////////////////////////////////////////////////
+// public functions:
+////////////////////////////////////////////////////////////////
+
+/** Get supported external trigger sources.
+ *
+ *  @param camera points to DC1394 camera struct
+ *  @return corresponding dc1394trigger_sources_t enum value selected
+ */
+bool enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources)
+{
+  dc1394error_t err = dc1394_external_trigger_get_supported_sources(camera, &sources);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("enumTriggerSources() failed: %d", err);
+    return false; // failure
+  }
+
+    std::ostringstream ss;
+    if(sources.num != 0)
+    {
+      for(size_t i = 0; i < sources.num - 1; i++)
+        ss << triggerSourceName(sources.sources[i]) << ", ";
+      ss << triggerSourceName(sources.sources[sources.num - 1]);
+    }
+    else
+    {
+      ss << "none";
+    }
+
+    ROS_DEBUG_STREAM("Trigger sources: " << ss.str());
+  return true;
+}
+
+/** Get external trigger polarity.
+ *
+ *  @param camera points to DC1394 camera struct.
+ *  @return corresponding dc1394trigger_polarity_t enum value selected,
+ *                 if successful; DC1394_TRIGGER_ACTIVE_NUM if not.
+ */
+dc1394trigger_polarity_t getPolarity(dc1394camera_t *camera)
+{
+  dc1394trigger_polarity_t current_polarity;
+
+  dc1394bool_t has_polarity;
+  dc1394error_t err = dc1394_external_trigger_has_polarity(camera, &has_polarity);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("getPolarity() failed: %d", err);
+    return (dc1394trigger_polarity_t) DC1394_TRIGGER_ACTIVE_NUM; // failure
+  }
+
+  if (has_polarity == DC1394_TRUE)
+  {
+    err = dc1394_external_trigger_get_polarity(camera, &current_polarity);
+    if (err != DC1394_SUCCESS)
+    {
+      ROS_FATAL("getPolarity() failed: %d", err);
+      return (dc1394trigger_polarity_t) DC1394_TRIGGER_ACTIVE_NUM; // failure
+    }
+  }
+  else
+  {
+    ROS_ERROR("Polarity is not supported");
+    return (dc1394trigger_polarity_t) DC1394_TRIGGER_ACTIVE_NUM; // failure
+  }
+
+  return current_polarity; // success
+}
+
+/** Set external trigger polarity.
+ *  @param camera points to DC1394 camera struct
+ *  @param[in,out] polarity Config parameter for this option,
+ *                 updated if the camera does not support the
+ *                 requested value
+ *  @return true if polarity set successfully, false if not.
+ */
+bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
+{
+  dc1394trigger_polarity_t current_polarity;
+
+  dc1394bool_t has_polarity;
+  dc1394error_t err = dc1394_external_trigger_has_polarity(camera, &has_polarity);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("setPolarity() failed: %d", err);
+    return false; // failure
+  }
+
+  if (has_polarity == DC1394_TRUE)
+  {
+    err = dc1394_external_trigger_set_polarity(camera, polarity);
+    if (err != DC1394_SUCCESS)
+    {
+      polarity = getPolarity(camera);
+      ROS_FATAL("setPolarity() failed: %d", err);
+      return false; // failure
+    }
+    ROS_DEBUG("setPolarity(): %s", triggerPolarityName(polarity).c_str());
+  }
+  else
+  {
+    ROS_FATAL("Polarity is not supported");
+    return false; // failure
+  }
+
+  return true; // success
+}
+
+/** Get external trigger power state.
+ *
+ *  @param camera points to DC1394 camera struct.
+ *  @return DC1394_ON for external trigger; DC1394_OFF for internal trigger.
+ */
+dc1394switch_t getExternalTriggerPowerState(dc1394camera_t *camera)
+{
+  dc1394switch_t state;
+
+  dc1394error_t err = dc1394_external_trigger_get_power(camera, &state);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("getExternalTriggerPowerState() failed: %d", err);
+    return (dc1394switch_t)-1; // failure
+  }
+  return state;
+}
+
+/** Set external trigger power state.
+ *  @param camera points to DC1394 camera struct
+ *  @param[in,out] state Config parameter for this option,
+ *                 updated if the camera does not support the
+ *                 requested value
+ *  @return true if set successfully, false if not.
+ */
+bool setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
+{
+  dc1394switch_t current_state = getExternalTriggerPowerState(camera);
+  dc1394error_t err = dc1394_external_trigger_set_power(camera, state);
+  if (err != DC1394_SUCCESS)
+  {
+    state = current_state;
+    ROS_FATAL("setExternalTriggerPowerState() failed: %d", err);
+    return false; // failure
+  }
+  ROS_DEBUG("setExternalTriggerPowerState(): %s", (state == DC1394_ON ? "ON" : "OFF"));
+  return true; // success
+}
+
+/** Get software trigger power state.
+ *
+ *  @param camera points to DC1394 camera struct.
+ *  @return DC1394_ON if software trigger is on; DC1394_OFF if not.
+ */
+dc1394switch_t getSoftwareTriggerPowerState(dc1394camera_t *camera)
+{
+  dc1394switch_t state;
+
+  dc1394error_t err = dc1394_software_trigger_get_power(camera, &state);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("getSoftwareTriggerPowerState() failed: %d", err);
+    return (dc1394switch_t)-1; // failure
+  }
+  return state;
+}
+
+/** Set software trigger power state.
+ *  @param camera points to DC1394 camera struct
+ *  @param[in,out] state Config parameter for this option,
+ *                 updated if the camera does not support the
+ *                 requested value
+ *  @return true if set successfully, false if not.
+ */
+bool setSoftwareTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
+{
+  dc1394switch_t current_state = getSoftwareTriggerPowerState(camera);
+  dc1394error_t err = dc1394_software_trigger_set_power(camera, state);
+  if (err != DC1394_SUCCESS)
+  {
+    state = current_state;
+    ROS_FATAL("setSoftwareTriggerPowerState() failed: %d", err);
+    return false; // failure
+  }
+  ROS_DEBUG("setSoftwareTriggerPowerState(): %s", (state == DC1394_ON ? "ON" : "OFF"));
+  return true; // success
+}
+
+/** Get current trigger mode.
+ *
+ *  @param camera points to DC1394 camera struct.
+ *  @return corresponding dc1394trigger_mode_t enum value selected,
+ *                 if successful; DC1394_TRIGGER_MODE_NUM if not.
+ */
+dc1394trigger_mode_t getMode(dc1394camera_t *camera)
+{
+  dc1394trigger_mode_t mode;
+
+  dc1394error_t err = dc1394_external_trigger_get_mode(camera, &mode);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("getTriggerMode() failed: %d", err);
+    return (dc1394trigger_mode_t) DC1394_TRIGGER_MODE_NUM; // failure
+  }
+
+  return mode;
+}
+
+/** Set external trigger mode.
+ *  @param camera points to DC1394 camera struct
+ *  @param[in,out] mode Config parameter for this option,
+ *                 updated if the camera does not support the
+ *                 requested value
+ *  @return true if set successfully, false if not.
+ */
+bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode)
+{
+  dc1394trigger_mode_t current_mode = getMode(camera);
+  dc1394error_t err = dc1394_external_trigger_set_mode(camera, mode);
+
+  if (err != DC1394_SUCCESS)
+  {
+    mode = current_mode;
+    ROS_FATAL("setTriggerMode() failed: %d", err);
+    return false; // failure
+  }
+  ROS_DEBUG("setMode(): %s", triggerModeName(mode).c_str());
+  return true; // success
+}
+
+/** Get current trigger source.
+ *
+ *  @param camera points to DC1394 camera struct.
+ *  @return corresponding dc1394trigger_source_t enum value selected,
+ *                 if successful; DC1394_TRIGGER_SOURCE_NUM if not.
+ */
+dc1394trigger_source_t getSource(dc1394camera_t *camera)
+{
+  dc1394trigger_source_t source;
+
+  dc1394error_t err = dc1394_external_trigger_get_source(camera, &source);
+  if (err != DC1394_SUCCESS)
+  {
+    ROS_FATAL("getTriggerSource() failed: %d", err);
+    return (dc1394trigger_source_t) DC1394_TRIGGER_SOURCE_NUM; // failure
+  }
+
+  return source;
+}
+
+/** Set external trigger source.
+ *  @param camera points to DC1394 camera struct
+ *  @param[in,out] source Config parameter for this option,
+ *                 updated if the camera does not support the
+ *                 requested value
+ *  @return true if set successfully, false if not.
+ */
+bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
+{
+  dc1394trigger_source_t current_source = getSource(camera);
+  dc1394error_t err = dc1394_external_trigger_set_source(camera, source);
+
+  if (err != DC1394_SUCCESS)
+  {
+    source = current_source;
+    ROS_FATAL("setTriggerSource() failed: %d", err);
+    return false; // failure
+  }
+  ROS_DEBUG("setSource(): %s", triggerSourceName(source).c_str());
+
+  return true; // success
+}
+
+} // namespace Trigger

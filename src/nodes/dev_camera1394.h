@@ -69,7 +69,7 @@ namespace camera1394
   class Camera1394
   {
   public:
-    Camera1394 ();
+    Camera1394();
     ~Camera1394 ();
 
     int open(camera1394::Camera1394Config &newconfig);
@@ -106,6 +106,14 @@ namespace camera1394
         format7_.setOperationalParameters(ci);
     }
 
+    /** reconfigures triggering parameters according to config values
+     *
+     *  @param newconfig [in,out] configuration parameters, updated
+     *         to conform with device restrictions.
+     *  @return true if successful
+     */
+    void reconfigureTrigger(Config &newconfig);
+
     std::string device_id_;
     boost::shared_ptr<Features> features_;
 
@@ -116,6 +124,10 @@ namespace camera1394
     dc1394video_mode_t videoMode_;
     dc1394color_filter_t BayerPattern_;
     dc1394bayer_method_t BayerMethod_;
+    dc1394trigger_mode_t triggerMode_;
+    dc1394trigger_source_t triggerSource_;
+    dc1394trigger_sources_t triggerSources_;
+    dc1394trigger_polarity_t triggerPolarity_;
     bool DoBayerConversion_;
     Format7 format7_;
     bool use_ros_time_;
@@ -124,6 +136,11 @@ namespace camera1394
     void SafeCleanup();
     void findBayerPattern(const char*);
     bool findBayerMethod(const char*);
+
+    bool findTriggerMode(std::string str);
+    bool findTriggerSource(std::string str);
+    bool findTriggerPolarity(std::string str);
+    bool checkTriggerSource(dc1394trigger_source_t source);
   };
 };
 

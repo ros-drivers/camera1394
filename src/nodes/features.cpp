@@ -166,6 +166,8 @@ bool Features::initialize(Config *newconfig)
             &newconfig->auto_sharpness, &newconfig->sharpness);
   configure(DC1394_FEATURE_SHUTTER,
             &newconfig->auto_shutter, &newconfig->shutter);
+  configure(DC1394_FEATURE_TRIGGER,
+            &newconfig->auto_trigger, &newconfig->trigger);
   configure(DC1394_FEATURE_WHITE_BALANCE, &newconfig->auto_white_balance,
             &newconfig->white_balance_BU, &newconfig->white_balance_RV);
   configure(DC1394_FEATURE_ZOOM,
@@ -223,6 +225,9 @@ void Features::reconfigure(Config *newconfig)
   updateIfChanged(DC1394_FEATURE_SHUTTER,
                   oldconfig_.auto_shutter, &newconfig->auto_shutter,
                   oldconfig_.shutter, &newconfig->shutter);
+  updateIfChanged(DC1394_FEATURE_TRIGGER,
+                  oldconfig_.auto_trigger, &newconfig->auto_trigger,
+                  oldconfig_.trigger, &newconfig->trigger);
   // White balance has two component parameters: Blue/U and Red/V.
   updateIfChanged(DC1394_FEATURE_WHITE_BALANCE,
                   oldconfig_.auto_white_balance,
