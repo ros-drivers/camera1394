@@ -176,7 +176,7 @@ dc1394trigger_polarity_t getPolarity(dc1394camera_t *camera)
  */
 bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
 {
-  dc1394trigger_polarity_t current_polarity;
+  dc1394trigger_polarity_t current_polarity = getPolarity(camera);
 
   dc1394bool_t has_polarity;
   dc1394error_t err = dc1394_external_trigger_has_polarity(camera, &has_polarity);
@@ -188,10 +188,13 @@ bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
 
   if (has_polarity == DC1394_TRUE)
   {
+    // if config not changed, then do nothing
+    if(current_polarity == polarity) return true;
+
     err = dc1394_external_trigger_set_polarity(camera, polarity);
     if (err != DC1394_SUCCESS)
     {
-      polarity = getPolarity(camera);
+      polarity = current_polarity;
       ROS_FATAL("setPolarity() failed: %d", err);
       return false; // failure
     }
@@ -234,6 +237,10 @@ dc1394switch_t getExternalTriggerPowerState(dc1394camera_t *camera)
 bool setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
 {
   dc1394switch_t current_state = getExternalTriggerPowerState(camera);
+
+  // if config not changed, then do nothing
+  if(current_state == state) return true;
+
   dc1394error_t err = dc1394_external_trigger_set_power(camera, state);
   if (err != DC1394_SUCCESS)
   {
@@ -273,6 +280,10 @@ dc1394switch_t getSoftwareTriggerPowerState(dc1394camera_t *camera)
 bool setSoftwareTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
 {
   dc1394switch_t current_state = getSoftwareTriggerPowerState(camera);
+
+  // if config not changed, then do nothing
+  if(current_state == state) return true;
+
   dc1394error_t err = dc1394_software_trigger_set_power(camera, state);
   if (err != DC1394_SUCCESS)
   {
@@ -314,8 +325,11 @@ dc1394trigger_mode_t getMode(dc1394camera_t *camera)
 bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode)
 {
   dc1394trigger_mode_t current_mode = getMode(camera);
-  dc1394error_t err = dc1394_external_trigger_set_mode(camera, mode);
 
+  // if config not changed, then do nothing
+  if(current_mode == mode) return true;
+
+  dc1394error_t err = dc1394_external_trigger_set_mode(camera, mode);
   if (err != DC1394_SUCCESS)
   {
     mode = current_mode;
@@ -356,6 +370,10 @@ dc1394trigger_source_t getSource(dc1394camera_t *camera)
 bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
 {
   dc1394trigger_source_t current_source = getSource(camera);
+
+  // if config not changed, then do nothing
+  if(current_source == source) return true;
+
   dc1394error_t err = dc1394_external_trigger_set_source(camera, source);
 
   if (err != DC1394_SUCCESS)
