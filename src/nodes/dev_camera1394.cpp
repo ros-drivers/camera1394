@@ -356,90 +356,6 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
                   << " " << camera_->model);
 
   //////////////////////////////////////////////////////////////
-  // set triggering modes
-  //////////////////////////////////////////////////////////////
-  dc1394switch_t on_off = (dc1394switch_t) newconfig.external_trigger;
-  if (!Trigger::setExternalTriggerPowerState(camera_, on_off))
-  {
-    newconfig.external_trigger = on_off;
-    SafeCleanup();
-    CAM_EXCEPT(camera1394::Exception, "Failed to set external trigger power");
-    return -1;
-  }
-
-  if (!Trigger::enumSources(camera_, triggerSources_))
-  {
-    SafeCleanup();
-    CAM_EXCEPT(camera1394::Exception, "Failed to enumerate trigger sources");
-    return -1;
-  }
-
-///// Doesn't work. libdc1394 returns DC1394_FAILURE
-//  on_off = (dc1394switch_t) newconfig.software_trigger;
-//  if (!Trigger::setSoftwareTriggerPowerState(camera_, on_off))
-//  {
-//    newconfig.software_trigger = on_off;
-//    SafeCleanup();
-//    CAM_EXCEPT(camera1394::Exception, "Failed to set software trigger power");
-//    return -1;
-//  }
-
-  if (findTriggerMode(newconfig.trigger_mode))
-  {
-    if (!Trigger::setMode(camera_, triggerMode_))
-    {
-      SafeCleanup();
-      CAM_EXCEPT(camera1394::Exception, "Failed (1) to set trigger mode");
-      return -1;
-    }
-  }
-  else
-  {
-    SafeCleanup();
-    CAM_EXCEPT(camera1394::Exception, "Failed (2) to set trigger mode");
-    return -1;
-  }
-
-  if (triggerSources_.num != 0)
-  {
-    if (findTriggerSource(newconfig.trigger_source) && checkTriggerSource(triggerSource_))
-    {
-      if (!Trigger::setSource(camera_, triggerSource_))
-      {
-        SafeCleanup();
-        CAM_EXCEPT(camera1394::Exception, "Failed (1) to set trigger source");
-        return -1;
-      }
-    }
-    else
-    {
-      SafeCleanup();
-      CAM_EXCEPT(camera1394::Exception, "Failed (2) to set trigger source");
-      return -1;
-    }
-  }
-  else
-  {
-    ROS_WARN("No triggering sources found");
-  }
-
-  if (findTriggerPolarity(newconfig.trigger_polarity))
-  {
-    if (!Trigger::setPolarity(camera_, triggerPolarity_))
-    {
-      SafeCleanup();
-      CAM_EXCEPT(camera1394::Exception, "Failed (1) to set trigger polarity");
-      return -1;
-    }
-  }
-  else
-  {
-    SafeCleanup();
-    CAM_EXCEPT(camera1394::Exception, "Failed (2) to set trigger polarity");
-    return -1;
-  }
-
-  //////////////////////////////////////////////////////////////
   // initialize camera
   //////////////////////////////////////////////////////////////
 
@@ -769,7 +685,94 @@ void Camera1394::readData(sensor_msgs::Image& image)
     free(capture_buffer);
 }
 
-void Camera1394::reconfigureTrigger(Config &newconfig)
+bool Camera1394::reconfigureTrigger(Config *newconfig)
 {
+  bool is_err = false;
 
+  //////////////////////////////////////////////////////////////
+  // set triggering modes
+  //////////////////////////////////////////////////////////////
+  dc1394switch_t on_off = (dc1394switch_t) newconfig->external_trigger;
+  if (!Trigger::setExternalTriggerPowerState(camera_, on_off))
+  {
+    newconfig->external_trigger = on_off;
+    ROS_ERROR("Failed to set external trigger power");
+    is_err = true;
+  }
+
+  on_off = (dc1394switch_t) newconfig->software_trigger;
+  if (!Trigger::setSoftwareTriggerPowerState(camera_, on_off))
+  {
+    newconfig->software_trigger = on_off;
+    ROS_ERROR("Failed to set software trigger power");
+    is_err = true;
+  }
+
+  if (findTriggerMode(newconfig->trigger_mode))
+  {
+    if (!Trigger::setMode(camera_, triggerMode_))
+    {
+      ROS_ERROR("Failed to set trigger mode");
+      is_err = true;
+    }
+  }
+  else
+  {
+    ROS_ERROR_STREAM("Unknown trigger mode: " << newconfig->trigger_mode);
+    is_err = true;
+  }
+
+  if (triggerSources_.num != 0)
+  {
+    if (findTriggerSource(newconfig->trigger_source) && checkTriggerSource(triggerSource_))
+    {
+      if (!Trigger::setSource(camera_, triggerSource_))
+      {
+        ROS_ERROR("Failed to set trigger source");
+        is_err = true;
+      }
+    }
+    else
+    {
+      ROS_ERROR_STREAM("Unknown trigger source: " << newconfig->trigger_source);
+      is_err = true;
+    }
+  }
+  else
+  {
+    ROS_DEBUG("No triggering sources available");
+  }
+
+  if (findTriggerPolarity(newconfig->trigger_polarity))
+  {
+    if (!Trigger::setPolarity(camera_, triggerPolarity_))
+    {
+      ROS_ERROR("Failed to set trigger polarity");
+      is_err = true;
+    }
+  }
+  else
+  {
+    ROS_ERROR_STREAM("Unknown trigger polarity: " << newconfig->trigger_polarity);
+    is_err = true;
+  }
+
+  return is_err;
+}
+
+bool Camera1394::initializeTrigger(Config *newconfig)
+{
+  bool is_err = false;
+
+  ROS_DEBUG_STREAM("[" << device_id_ << "] configuring triggers");
+
+  // Enumerate trigger sources
+  if (!Trigger::enumSources(camera_, triggerSources_))
+  {
+    ROS_ERROR("Failed to enumerate trigger sources");
+    is_err = true;
+  }
+  if (!reconfigureTrigger(newconfig)) is_err = true;
+
+  return is_err;
 }

@@ -110,9 +110,18 @@ namespace camera1394
      *
      *  @param newconfig [in,out] configuration parameters, updated
      *         to conform with device restrictions.
-     *  @return true if successful
+     *  @return true if successful; false if not
      */
-    void reconfigureTrigger(Config &newconfig);
+    bool reconfigureTrigger(Config *newconfig);
+
+    /** enumerates trigger sources and reconfigures triggering parameters
+     *  according to config values
+     *
+     *  @param newconfig [in,out] configuration parameters, updated
+     *         to conform with device restrictions.
+     *  @return true if successful; false if not
+     */
+    bool initializeTrigger(Config *newconfig);
 
     std::string device_id_;
     boost::shared_ptr<Features> features_;
