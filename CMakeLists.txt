@@ -47,6 +47,10 @@ catkin_package(CATKIN_DEPENDS
 # build package sources
 add_subdirectory(src/nodes)
 
+# install pluginlib definition for the nodelet
+install(FILES camera1394_nodelet.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
 # driver unit tests
 #
 #  * When -DDEVICE_TEST=true is configured: run tests that require
