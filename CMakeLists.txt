@@ -53,7 +53,7 @@ install(FILES camera1394_nodelet.xml
 
 # driver unit tests
 if (CATKIN_ENABLE_TESTING)
-  message("${PROJECT_NAME} unit testing enabled")
+  message("-- ${PROJECT_NAME} unit testing enabled")
   #
   #  * When -DUSE_DEVICE=1 is configured: run tests that require some
   #    real 1394 camera to be present.
@@ -69,5 +69,5 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest(tests/no_device_node.test)
   add_rostest(tests/no_device_nodelet.test)
 else ()
-  message("${PROJECT_NAME} unit testing disabled")
+  message("-- ${PROJECT_NAME} unit testing disabled")
 endif (CATKIN_ENABLE_TESTING)
