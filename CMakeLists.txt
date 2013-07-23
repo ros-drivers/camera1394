@@ -52,18 +52,22 @@ install(FILES camera1394_nodelet.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 # driver unit tests
-#
-#  * When -DDEVICE_TEST=true is configured: run tests that require
-#    some real 1394 camera to be attached.
-#
-#  * Otherwise, run only tests that require no attached camera, as is
-#    done on the ROS build machines.
-#
-
-if (${DEVICE_TEST})
-  add_rostest(tests/camera_node_hz.test)
-  add_rostest(tests/camera_nodelet_hz.test)
-endif (${DEVICE_TEST})
-
-add_rostest(tests/no_device_node.test)
-add_rostest(tests/no_device_nodelet.test)
+if (CATKIN_ENABLE_TESTING)
+  message("${PROJECT_NAME} unit testing enabled")
+  #
+  #  * When -DUSE_DEVICE=1 is configured: run tests that require some
+  #    real 1394 camera to be present.
+  #
+  #  * Otherwise, run only tests that require no attached camera, as is
+  #    done on the ROS build machines.
+  #
+  if (${USE_DEVICE})
+    add_rostest(tests/camera_node_hz.test)
+    add_rostest(tests/camera_nodelet_hz.test)
+  endif ()
+  
+  add_rostest(tests/no_device_node.test)
+  add_rostest(tests/no_device_nodelet.test)
+else ()
+  message("${PROJECT_NAME} unit testing disabled")
+endif (CATKIN_ENABLE_TESTING)

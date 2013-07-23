@@ -4,8 +4,9 @@ Change history
 1.9.4 (forthcoming)
 -------------------
 
- * Install `pluginlib` XML file (`#10`_).
- * Enable unit tests when `CATKIN_ENABLE_TESTING` is set.
+ * Install ``pluginlib`` XML file (`#10`_).
+ * Enable unit tests when ``CATKIN_ENABLE_TESTING`` set.
+ * Enable tests requiring a real camera when ``USE_DEVICE`` set.
 
 1.9.3 (2013-06-05)
 -------------------
