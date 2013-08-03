@@ -344,7 +344,7 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
   findBayerPattern(newconfig.bayer_pattern.c_str());
 
   use_ros_time_ = newconfig.use_ros_time;
-  ros_time_offset_ = newconfig.ros_time_offset;
+  time_offset_ = newconfig.time_offset;
 
   //////////////////////////////////////////////////////////////
   // start the device streaming data
@@ -464,7 +464,7 @@ void Camera1394::readData(sensor_msgs::Image& image)
   uint8_t* capture_buffer;
 
   if (use_ros_time_)
-    image.header.stamp = ros::Time::now() + ros::Duration(ros_time_offset_);
+    image.header.stamp = ros::Time::now() + ros::Duration(time_offset_);
   else
     image.header.stamp = ros::Time((double) frame->timestamp / 1000000.0);
 

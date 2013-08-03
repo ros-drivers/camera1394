@@ -119,7 +119,7 @@ namespace camera1394
     bool DoBayerConversion_;
     Format7 format7_;
     bool use_ros_time_;
-    float ros_time_offset_;
+    float time_offset_;
 
     void SafeCleanup();
     void findBayerPattern(const char*);

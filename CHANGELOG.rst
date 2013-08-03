@@ -4,6 +4,7 @@ Change history
 1.9.4 (forthcoming)
 -------------------
 
+ * Add ``time_offset`` parameter (`#11`_), thanks to David Gossow.
  * Install ``pluginlib`` XML file (`#10`_).
  * Enable unit tests when ``CATKIN_ENABLE_TESTING`` set.
  * Enable tests requiring a real camera when ``USE_DEVICE`` set.
@@ -118,6 +119,7 @@ Change history
 .. _`#6`: https://github.com/ros-drivers/camera1394/issues/6
 .. _`#7`: https://github.com/ros-drivers/camera1394/issues/7
 .. _`#10`: https://github.com/ros-drivers/camera1394/issues/10
+.. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
