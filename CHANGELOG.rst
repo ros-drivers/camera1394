@@ -1,8 +1,8 @@
 Change history
 ==============
 
-1.9.4 (forthcoming)
--------------------
+1.9.4 (2013-08-03)
+------------------
 
  * Add ``time_offset`` parameter (`#11`_), thanks to David Gossow.
  * Install ``pluginlib`` XML file (`#10`_).
