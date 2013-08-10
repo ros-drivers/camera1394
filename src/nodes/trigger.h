@@ -134,8 +134,8 @@ public:
   dc1394trigger_source_t getSource(dc1394camera_t *camera);
   bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source);
 
-  bool reconfigureTrigger(Config *newconfig);
-  bool initializeTrigger(Config *newconfig);
+  bool reconfigure(Config *newconfig);
+  bool initialize(Config *newconfig);
 };
 
 #endif // _TRIGGER_H_

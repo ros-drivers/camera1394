@@ -412,7 +412,7 @@ bool Trigger::setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
  *         to conform with device restrictions.
  *  @return true if successful; false if not
  */
-bool Trigger::reconfigureTrigger(Config *newconfig)
+bool Trigger::reconfigure(Config *newconfig)
 {
   bool is_err = false;
 
@@ -494,7 +494,7 @@ bool Trigger::reconfigureTrigger(Config *newconfig)
  *         to conform with device restrictions.
  *  @return true if successful; false if not
  */
-bool Trigger::initializeTrigger(Config *newconfig)
+bool Trigger::initialize(Config *newconfig)
 {
   bool is_err = false;
 
@@ -506,7 +506,7 @@ bool Trigger::initializeTrigger(Config *newconfig)
     ROS_ERROR("Failed to enumerate trigger sources");
     is_err = true;
   }
-  if (!reconfigureTrigger(newconfig)) is_err = true;
+  if (!reconfigure(newconfig)) is_err = true;
 
   return is_err;
 }
