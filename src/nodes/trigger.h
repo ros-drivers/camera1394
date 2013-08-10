@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
- *  Copyright (c) 2013 Boris Gromov, BioRobotics Lab at Korea Tech
+*  Copyright (c) 2013 Boris Gromov, BioRobotics Lab at Korea Tech
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -49,8 +49,56 @@
 
 */
 
-namespace Trigger
+class Trigger
 {
+private:
+  /// driver parameter names, corresponding to DC1394 trigger modes
+  static const std::string trigger_mode_names_[DC1394_TRIGGER_MODE_NUM];
+  /// driver parameter names, corresponding to DC1394 trigger sources
+  static const std::string trigger_source_names_[DC1394_TRIGGER_SOURCE_NUM];
+  /// driver parameter names, corresponding to DC1394 trigger sources
+  static const std::string trigger_polarity_names_[DC1394_TRIGGER_ACTIVE_NUM];
+
+public:
+  /** Return driver parameter name of DC1394 trigger_mode.
+   *
+   *  @param mode DC1394 trigger mode number
+   *  @return corresponding parameter name ("" if not a valid mode)
+   */
+  inline const std::string triggerModeName(dc1394trigger_mode_t mode)
+  {
+    if (mode >= DC1394_TRIGGER_MODE_MIN && mode <= DC1394_TRIGGER_MODE_MAX)
+      return trigger_mode_names_[mode - DC1394_TRIGGER_MODE_MIN];
+    else
+      return "";
+  }
+
+  /** Return driver parameter name of DC1394 trigger_source.
+   *
+   *  @param mode DC1394 trigger source number
+   *  @return corresponding parameter name ("" if not a valid mode)
+   */
+  inline const std::string triggerSourceName(dc1394trigger_source_t source)
+  {
+    if (source >= DC1394_TRIGGER_SOURCE_MIN && source <= DC1394_TRIGGER_SOURCE_MAX)
+      return trigger_source_names_[source - DC1394_TRIGGER_SOURCE_MIN];
+    else
+      return "";
+  }
+
+  /** Return driver parameter name of DC1394 trigger_polarity.
+   *
+   *  @param mode DC1394 trigger polarity
+   *  @return corresponding parameter name ("" if not a valid mode)
+   */
+  inline const std::string triggerPolarityName(dc1394trigger_polarity_t polarity)
+  {
+    if (polarity >= DC1394_TRIGGER_ACTIVE_MIN && polarity <= DC1394_TRIGGER_ACTIVE_MAX)
+      return trigger_polarity_names_[polarity - DC1394_TRIGGER_ACTIVE_MIN];
+    else
+      return "";
+  }
+
   bool enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources);
   dc1394trigger_polarity_t getPolarity(dc1394camera_t *camera);
   bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity);
@@ -62,6 +110,6 @@ namespace Trigger
   bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode);
   dc1394trigger_source_t getSource(dc1394camera_t *camera);
   bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source);
-}
+};
 
 #endif // _TRIGGER_H_

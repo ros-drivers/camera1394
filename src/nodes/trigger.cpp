@@ -42,71 +42,19 @@
  @author Boris Gromov
  */
 
-////////////////////////////////////////////////////////////////
-// static data and functions:
-////////////////////////////////////////////////////////////////
-namespace Trigger
-{
-// driver parameter names, corresponding to DC1394 trigger modes
-static const std::string trigger_mode_names_[DC1394_TRIGGER_MODE_NUM] = {"mode_0", "mode_1", "mode_2", "mode_3", "mode_4",
+// initializing constants
+const std::string Trigger::trigger_mode_names_[DC1394_TRIGGER_MODE_NUM] = {"mode_0", "mode_1", "mode_2", "mode_3", "mode_4",
                                                                          "mode_5", "mode_14", "mode_15", };
-
-/** Return driver parameter name of DC1394 trigger_mode.
- *
- *  @param mode DC1394 trigger mode number
- *  @return corresponding parameter name ("" if not a valid mode)
- */
-inline const std::string triggerModeName(dc1394trigger_mode_t mode)
-{
-  if (mode >= DC1394_TRIGGER_MODE_MIN && mode <= DC1394_TRIGGER_MODE_MAX)
-    return trigger_mode_names_[mode - DC1394_TRIGGER_MODE_MIN];
-  else
-    return "";
-}
-
-/// driver parameter names, corresponding to DC1394 trigger sources
-static const std::string trigger_source_names_[DC1394_TRIGGER_SOURCE_NUM] = {"source_0", "source_1", "source_2",
+const std::string Trigger::trigger_source_names_[DC1394_TRIGGER_SOURCE_NUM] = {"source_0", "source_1", "source_2",
                                                                              "source_3", "source_software", };
-
-/** Return driver parameter name of DC1394 trigger_source.
- *
- *  @param mode DC1394 trigger source number
- *  @return corresponding parameter name ("" if not a valid mode)
- */
-inline const std::string triggerSourceName(dc1394trigger_source_t source)
-{
-  if (source >= DC1394_TRIGGER_SOURCE_MIN && source <= DC1394_TRIGGER_SOURCE_MAX)
-    return trigger_source_names_[source - DC1394_TRIGGER_SOURCE_MIN];
-  else
-    return "";
-}
-
-/// driver parameter names, corresponding to DC1394 trigger sources
-static const std::string trigger_polarity_names_[DC1394_TRIGGER_ACTIVE_NUM] = {"active_low", "active_high", };
-
-/** Return driver parameter name of DC1394 trigger_polarity.
- *
- *  @param mode DC1394 trigger polarity
- *  @return corresponding parameter name ("" if not a valid mode)
- */
-inline const std::string triggerPolarityName(dc1394trigger_polarity_t polarity)
-{
-  if (polarity >= DC1394_TRIGGER_ACTIVE_MIN && polarity <= DC1394_TRIGGER_ACTIVE_MAX)
-    return trigger_polarity_names_[polarity - DC1394_TRIGGER_ACTIVE_MIN];
-  else
-    return "";
-}
-
-////////////////////////////////////////////////////////////////
-// public functions:
-////////////////////////////////////////////////////////////////
+const std::string Trigger::trigger_polarity_names_[DC1394_TRIGGER_ACTIVE_NUM] = {"active_low", "active_high", };
 
 /** Get supported external trigger sources.
  *
  *  @param camera points to DC1394 camera struct
  *  @return corresponding dc1394trigger_sources_t enum value selected
  */
-bool enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources)
+bool Trigger::enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources)
 {
   dc1394error_t err = dc1394_external_trigger_get_supported_sources(camera, &sources);
   if (err != DC1394_SUCCESS)
@@ -137,7 +85,7 @@ bool enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources)
  *  @return corresponding dc1394trigger_polarity_t enum value selected,
  *                 if successful; DC1394_TRIGGER_ACTIVE_NUM if not.
  */
-dc1394trigger_polarity_t getPolarity(dc1394camera_t *camera)
+dc1394trigger_polarity_t Trigger::getPolarity(dc1394camera_t *camera)
 {
   dc1394trigger_polarity_t current_polarity;
 
@@ -174,7 +122,7 @@ dc1394trigger_polarity_t getPolarity(dc1394camera_t *camera)
  *                 requested value
  *  @return true if polarity set successfully, false if not.
  */
-bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
+bool Trigger::setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
 {
   dc1394trigger_polarity_t current_polarity = getPolarity(camera);
 
@@ -214,7 +162,7 @@ bool setPolarity(dc1394camera_t *camera, dc1394trigger_polarity_t &polarity)
  *  @param camera points to DC1394 camera struct.
  *  @return DC1394_ON for external trigger; DC1394_OFF for internal trigger.
  */
-dc1394switch_t getExternalTriggerPowerState(dc1394camera_t *camera)
+dc1394switch_t Trigger::getExternalTriggerPowerState(dc1394camera_t *camera)
 {
   dc1394switch_t state;
 
@@ -234,7 +182,7 @@ dc1394switch_t getExternalTriggerPowerState(dc1394camera_t *camera)
  *                 requested value
  *  @return true if set successfully, false if not.
  */
-bool setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
+bool Trigger::setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
 {
   dc1394switch_t current_state = getExternalTriggerPowerState(camera);
 
@@ -257,7 +205,7 @@ bool setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
  *  @param camera points to DC1394 camera struct.
  *  @return DC1394_ON if software trigger is on; DC1394_OFF if not.
  */
-dc1394switch_t getSoftwareTriggerPowerState(dc1394camera_t *camera)
+dc1394switch_t Trigger::getSoftwareTriggerPowerState(dc1394camera_t *camera)
 {
   dc1394switch_t state;
 
@@ -277,7 +225,7 @@ dc1394switch_t getSoftwareTriggerPowerState(dc1394camera_t *camera)
  *                 requested value
  *  @return true if set successfully, false if not.
  */
-bool setSoftwareTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
+bool Trigger::setSoftwareTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
 {
   dc1394switch_t current_state = getSoftwareTriggerPowerState(camera);
 
@@ -301,7 +249,7 @@ bool setSoftwareTriggerPowerState(dc1394camera_t *camera, dc1394switch_t &state)
  *  @return corresponding dc1394trigger_mode_t enum value selected,
  *                 if successful; DC1394_TRIGGER_MODE_NUM if not.
  */
-dc1394trigger_mode_t getMode(dc1394camera_t *camera)
+dc1394trigger_mode_t Trigger::getMode(dc1394camera_t *camera)
 {
   dc1394trigger_mode_t mode;
 
@@ -322,7 +270,7 @@ dc1394trigger_mode_t getMode(dc1394camera_t *camera)
  *                 requested value
  *  @return true if set successfully, false if not.
  */
-bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode)
+bool Trigger::setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode)
 {
   dc1394trigger_mode_t current_mode = getMode(camera);
 
@@ -346,7 +294,7 @@ bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode)
  *  @return corresponding dc1394trigger_source_t enum value selected,
  *                 if successful; DC1394_TRIGGER_SOURCE_NUM if not.
  */
-dc1394trigger_source_t getSource(dc1394camera_t *camera)
+dc1394trigger_source_t Trigger::getSource(dc1394camera_t *camera)
 {
   dc1394trigger_source_t source;
 
@@ -367,7 +315,7 @@ dc1394trigger_source_t getSource(dc1394camera_t *camera)
  *                 requested value
  *  @return true if set successfully, false if not.
  */
-bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
+bool Trigger::setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
 {
   dc1394trigger_source_t current_source = getSource(camera);
 
@@ -386,5 +334,3 @@ bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
 
   return true; // success
 }
-
-} // namespace Trigger
