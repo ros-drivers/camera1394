@@ -356,7 +356,7 @@ namespace camera1394_driver
               }
 
             // initialize triggers
-            if (false == dev_->initializeTrigger(&newconfig))
+            if (false == dev_->trigger_->initializeTrigger(&newconfig))
               {
                 ROS_ERROR_STREAM("[" << camera_name_
                                  << "] trigger initialization failure");
@@ -370,7 +370,7 @@ namespace camera1394_driver
             dev_->features_->reconfigure(&newconfig);
 
             // update trigger options
-            dev_->reconfigureTrigger(&newconfig);
+            dev_->trigger_->reconfigureTrigger(&newconfig);
           }
       }
 

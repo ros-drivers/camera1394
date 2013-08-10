@@ -37,6 +37,9 @@
 
 #include <dc1394/dc1394.h>
 
+#include "camera1394/Camera1394Config.h"
+typedef camera1394::Camera1394Config Config;
+
 /** @file
 
     @brief libdc1394 triggering modes interface
@@ -59,7 +62,27 @@ private:
   /// driver parameter names, corresponding to DC1394 trigger sources
   static const std::string trigger_polarity_names_[DC1394_TRIGGER_ACTIVE_NUM];
 
+  dc1394camera_t *camera_;
+
+  dc1394trigger_mode_t triggerMode_;
+  dc1394trigger_source_t triggerSource_;
+  dc1394trigger_sources_t triggerSources_;
+  dc1394trigger_polarity_t triggerPolarity_;
+
+  bool findTriggerMode(std::string str);
+  bool findTriggerSource(std::string str);
+  bool findTriggerPolarity(std::string str);
+  bool checkTriggerSource(dc1394trigger_source_t source);
+
 public:
+  /** Constructor
+   *
+   *  @param camera address of DC1394 camera structure.
+   */
+  Trigger(dc1394camera_t *camera):
+    camera_(camera), triggerSources_((dc1394trigger_sources_t){0})
+  {};
+
   /** Return driver parameter name of DC1394 trigger_mode.
    *
    *  @param mode DC1394 trigger mode number
@@ -110,6 +133,9 @@ public:
   bool setMode(dc1394camera_t *camera, dc1394trigger_mode_t &mode);
   dc1394trigger_source_t getSource(dc1394camera_t *camera);
   bool setSource(dc1394camera_t *camera, dc1394trigger_source_t &source);
+
+  bool reconfigureTrigger(Config *newconfig);
+  bool initializeTrigger(Config *newconfig);
 };
 
 #endif // _TRIGGER_H_
