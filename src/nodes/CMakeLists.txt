@@ -4,7 +4,8 @@ set(CAMERA1394_SOURCES
   dev_camera1394.cpp
   features.cpp
   format7.cpp
-  modes.cpp)
+  modes.cpp
+  trigger.cpp)
 
 ## The following used to be necessary rosbuild on Mac OSX.
 ## No telling what, if anything, is needed with catkin.

@@ -354,12 +354,23 @@ namespace camera1394_driver
                                  << "] feature initialization failure");
                 closeCamera();          // can't continue
               }
+
+            // initialize triggers
+            if (false == dev_->trigger_->initialize(&newconfig))
+              {
+                ROS_ERROR_STREAM("[" << camera_name_
+                                 << "] trigger initialization failure");
+                closeCamera();          // can't continue
+              }
           }
         else
           {
             // update any features that changed
             // TODO replace this with a dev_->reconfigure(&newconfig);
             dev_->features_->reconfigure(&newconfig);
+
+            // update trigger options
+            dev_->trigger_->reconfigure(&newconfig);
           }
       }
 
