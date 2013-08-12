@@ -53,6 +53,7 @@
 #include "dev_camera1394.h"
 #include "features.h"
 #include "modes.h"
+#include "trigger.h"
 
 #define NUM_DMA_BUFFERS 4
 
@@ -358,7 +359,7 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
       CAM_EXCEPT(camera1394::Exception, "Failed to open device!");
       return -1;
     }
-  
+
   // Start transmitting camera data
   if (DC1394_SUCCESS != dc1394_video_set_transmission(camera_, DC1394_ON))
     {
@@ -373,6 +374,7 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
 
   // TODO: pass newconfig here and eliminate initialize() method
   features_.reset(new Features(camera_));
+  trigger_.reset(new Trigger(camera_));
  
   return 0;
 }
