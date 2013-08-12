@@ -72,8 +72,8 @@ if (CATKIN_ENABLE_TESTING)
     target_link_libraries(trigger_node
                           ${catkin_LIBRARIES}
                           ${DC1394_LIBRARY})
-    #add_rostest(tests/camera_node_trigger.test)
-    #add_rostest(tests/camera_nodelet_trigger.test)
+    #add_rostest(tests/trigger_node.test)    (not working)
+    #add_rostest(tests/trigger_nodelet.test) (not written)
   endif ()
   
   add_rostest(tests/no_device_node.test)
