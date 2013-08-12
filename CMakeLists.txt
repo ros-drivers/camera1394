@@ -65,6 +65,16 @@ if (CATKIN_ENABLE_TESTING)
     add_rostest(tests/camera_node_hz.test)
     add_rostest(tests/camera_nodelet_hz.test)
   endif ()
+
+  if (${USE_TRIGGER})
+    # build the software trigger node, but do not install it
+    add_executable(trigger_node tests/trigger_node.cpp)
+    target_link_libraries(trigger_node
+                          ${catkin_LIBRARIES}
+                          ${DC1394_LIBRARY})
+    #add_rostest(tests/camera_node_trigger.test)
+    #add_rostest(tests/camera_nodelet_trigger.test)
+  endif ()
   
   add_rostest(tests/no_device_node.test)
   add_rostest(tests/no_device_nodelet.test)
