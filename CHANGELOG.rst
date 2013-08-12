@@ -1,6 +1,11 @@
 Change history
 ==============
 
+1.9.5 (forthcoming)
+-------------------
+
+ * Add external triggering support (`#9`_), thanks to Boris Gromov.
+
 1.9.4 (2013-08-03)
 ------------------
 
@@ -10,7 +15,7 @@ Change history
  * Enable tests requiring a real camera when ``USE_DEVICE`` set.
 
 1.9.3 (2013-06-05)
--------------------
+------------------
 
  * Add Pan Control feature (`#7`_), works with Point Grey Ladybug 3.
    Thanks to Josep Bosch, Universitat de Girona.
@@ -118,6 +123,7 @@ Change history
 .. _`#1`: https://github.com/ros-drivers/camera1394/issues/1
 .. _`#6`: https://github.com/ros-drivers/camera1394/issues/6
 .. _`#7`: https://github.com/ros-drivers/camera1394/issues/7
+.. _`#9`: https://github.com/ros-drivers/camera1394/pull/9
 .. _`#10`: https://github.com/ros-drivers/camera1394/issues/10
 .. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
