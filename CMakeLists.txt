@@ -73,7 +73,7 @@ if (CATKIN_ENABLE_TESTING)
                           ${catkin_LIBRARIES}
                           ${DC1394_LIBRARY})
     add_rostest(tests/trigger_node.test)
-    #add_rostest(tests/trigger_nodelet.test) (not written)
+    add_rostest(tests/trigger_nodelet.test)
   endif ()
   
   add_rostest(tests/no_device_node.test)
