@@ -123,7 +123,7 @@ bool Trigger::checkTriggerSource(dc1394trigger_source_t source)
 /** Get supported external trigger sources.
  *
  *  @param camera points to DC1394 camera struct
- *  @return corresponding dc1394trigger_sources_t enum value selected
+ *  @return true if successful
  */
 bool Trigger::enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources)
 {
@@ -414,7 +414,7 @@ bool Trigger::setSource(dc1394camera_t *camera, dc1394trigger_source_t &source)
  */
 bool Trigger::reconfigure(Config *newconfig)
 {
-  bool is_err = false;
+  bool is_ok = true;
 
   //////////////////////////////////////////////////////////////
   // set triggering modes
@@ -424,7 +424,7 @@ bool Trigger::reconfigure(Config *newconfig)
   {
     newconfig->external_trigger = on_off;
     ROS_ERROR("Failed to set external trigger power");
-    is_err = true;
+    is_ok = false;
   }
 
   on_off = (dc1394switch_t) newconfig->software_trigger;
@@ -432,7 +432,7 @@ bool Trigger::reconfigure(Config *newconfig)
   {
     newconfig->software_trigger = on_off;
     ROS_ERROR("Failed to set software trigger power");
-    is_err = true;
+    is_ok = false;
   }
 
   if (findTriggerMode(newconfig->trigger_mode))
@@ -440,13 +440,13 @@ bool Trigger::reconfigure(Config *newconfig)
     if (!Trigger::setMode(camera_, triggerMode_))
     {
       ROS_ERROR("Failed to set trigger mode");
-      is_err = true;
+      is_ok = false;
     }
   }
   else
   {
     ROS_ERROR_STREAM("Unknown trigger mode: " << newconfig->trigger_mode);
-    is_err = true;
+    is_ok = false;
   }
 
   if (triggerSources_.num != 0)
@@ -456,13 +456,13 @@ bool Trigger::reconfigure(Config *newconfig)
       if (!Trigger::setSource(camera_, triggerSource_))
       {
         ROS_ERROR("Failed to set trigger source");
-        is_err = true;
+        is_ok = false;
       }
     }
     else
     {
       ROS_ERROR_STREAM("Unknown trigger source: " << newconfig->trigger_source);
-      is_err = true;
+      is_ok = false;
     }
   }
   else
@@ -475,19 +475,19 @@ bool Trigger::reconfigure(Config *newconfig)
     if (!Trigger::setPolarity(camera_, triggerPolarity_))
     {
       ROS_ERROR("Failed to set trigger polarity");
-      is_err = true;
+      is_ok = false;
     }
   }
   else
   {
     ROS_ERROR_STREAM("Unknown trigger polarity: " << newconfig->trigger_polarity);
-    is_err = true;
+    is_ok = false;
   }
 
-  return is_err;
+  return is_ok;
 }
 
-/** enumerates trigger sources and reconfigures triggering parameters
+/** enumerates trigger sources and configures triggering parameters
  *  according to config values
  *
  *  @param newconfig [in,out] configuration parameters, updated
@@ -496,17 +496,15 @@ bool Trigger::reconfigure(Config *newconfig)
  */
 bool Trigger::initialize(Config *newconfig)
 {
-  bool is_err = false;
-
-  ROS_DEBUG("[%016lx] configuring triggers", camera_->guid);
+  ROS_INFO("[%016lx] has trigger support", camera_->guid);
 
   // Enumerate trigger sources
   if (!Trigger::enumSources(camera_, triggerSources_))
   {
     ROS_ERROR("Failed to enumerate trigger sources");
-    is_err = true;
+    return false;
   }
-  if (!reconfigure(newconfig)) is_err = true;
 
-  return is_err;
+  // configure trigger features
+  return reconfigure(newconfig);
 }

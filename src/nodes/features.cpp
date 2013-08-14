@@ -36,6 +36,7 @@
 
 #include <cmath>
 #include "features.h"
+#include "trigger.h"
 
 /** @file
 
@@ -123,7 +124,9 @@ namespace
  */
 Features::Features(dc1394camera_t *camera):
   camera_(camera)
-{}
+{
+  trigger_.reset(new Trigger(camera));
+}
 
 /** Query and set all features for newly opened (or reopened) device.
  *
@@ -136,6 +139,8 @@ Features::Features(dc1394camera_t *camera):
  */
 bool Features::initialize(Config *newconfig)
 {
+  bool retval = true;
+
   // query all features for this device
   if (DC1394_SUCCESS != dc1394_feature_get_all(camera_, &feature_set_))
     {
@@ -173,9 +178,13 @@ bool Features::initialize(Config *newconfig)
   configure(DC1394_FEATURE_ZOOM,
             &newconfig->auto_zoom, &newconfig->zoom);
 
+  // set up trigger class, if supported by this camera
+  if (hasTrigger())
+    retval = trigger_->initialize(newconfig);
+
   // save configured values
   oldconfig_ = *newconfig;
-  return true;
+  return retval;
 }
 
 /** Reconfigure features for already open device.
@@ -237,6 +246,10 @@ void Features::reconfigure(Config *newconfig)
   updateIfChanged(DC1394_FEATURE_ZOOM,
                   oldconfig_.auto_zoom, &newconfig->auto_zoom,
  		  oldconfig_.zoom, &newconfig->zoom);
+
+  // reconfigure trigger class, if supported by this camera
+  if (hasTrigger())
+    trigger_->reconfigure(newconfig);
 
   // save modified values
   oldconfig_ = *newconfig;

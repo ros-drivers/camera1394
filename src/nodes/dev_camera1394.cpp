@@ -53,7 +53,6 @@
 #include "dev_camera1394.h"
 #include "features.h"
 #include "modes.h"
-#include "trigger.h"
 
 #define NUM_DMA_BUFFERS 4
 
@@ -374,7 +373,6 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
 
   // TODO: pass newconfig here and eliminate initialize() method
   features_.reset(new Features(camera_));
-  trigger_.reset(new Trigger(camera_));
  
   return 0;
 }

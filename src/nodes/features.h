@@ -43,6 +43,8 @@
 #include "camera1394/Camera1394Config.h"
 typedef camera1394::Camera1394Config Config;
 
+class Trigger;                        // actually defined in trigger.h
+
 /** @file
 
     @brief Camera1394 features interface
@@ -92,6 +94,19 @@ private:
       }
     return false;
   }
+
+  /** Does this camera support triggering?
+   *
+   *  @pre feature_set_ initialized for this camera
+   *  @return true if triggering supported
+   */
+  inline bool hasTrigger(void)
+  {
+    return DC1394_TRUE == feature_set_.feature[DC1394_FEATURE_TRIGGER].available;
+  }
+
+  // pointer to subordinate trigger class
+  boost::shared_ptr<Trigger> trigger_;
 
   bool setMode(dc1394feature_info_t *finfo, dc1394feature_mode_t mode);
   void setOff(dc1394feature_info_t *finfo);
