@@ -102,7 +102,8 @@ private:
    */
   inline bool hasTrigger(void)
   {
-    return DC1394_TRUE == feature_set_.feature[DC1394_FEATURE_TRIGGER].available;
+    return DC1394_TRUE == feature_set_.feature[DC1394_FEATURE_TRIGGER
+                                               - DC1394_FEATURE_MIN].available;
   }
 
   // pointer to subordinate trigger class
