@@ -51,7 +51,7 @@ void sigsegv_handler(int sig)
 {
   signal(SIGSEGV, SIG_DFL);
   fprintf(stderr, "Segmentation fault, stopping camera driver.\n");
-  ROS_ERROR("Segmentation fault, stopping camera.");
+  ROS_FATAL("Segmentation fault, stopping camera.");
   ros::shutdown();                      // stop the main loop
 }
 
@@ -144,7 +144,7 @@ private:
     dc1394error_t err = dc1394_software_trigger_set_power(camera_, DC1394_ON);
     bool retval = (err == DC1394_SUCCESS);
     if (!retval)
-      ROS_WARN("camera does not provide software trigger");
+      ROS_FATAL("camera does not provide software trigger");
     return retval;
   }
 
