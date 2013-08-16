@@ -27,7 +27,7 @@
         pkg="rostest" type="hztest" name="hztest_image_nodelet_trigger" >
     <param name="hz" value="2.0" />
     <param name="hzerror" value="0.5" />
-    <param name="test_duration" value="10.0" />    
+    <param name="test_duration" value="5.0" />    
     <param name="topic" value="camera/image_raw" />  
     <param name="wait_time" value="2.0" />  
   </test>
