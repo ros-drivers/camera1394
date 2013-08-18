@@ -110,7 +110,7 @@ private:
   boost::shared_ptr<Trigger> trigger_;
 
   bool setMode(dc1394feature_info_t *finfo, dc1394feature_mode_t mode);
-  void setOff(dc1394feature_info_t *finfo);
+  void setPower(dc1394feature_info_t *finfo, dc1394switch_t on_off);
   void updateIfChanged(dc1394feature_t feature,
                        int old_control, int *control,
                        double old_value, double *value);
