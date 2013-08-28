@@ -427,6 +427,9 @@ bool Trigger::reconfigure(Config *newconfig)
     is_ok = false;
   }
 
+  // if external trigger is OFF then ignore rest of parameters
+  if (DC1394_OFF == on_off) return is_ok;
+
   on_off = (dc1394switch_t) newconfig->software_trigger;
   if (!Trigger::setSoftwareTriggerPowerState(camera_, on_off))
   {
@@ -439,6 +442,9 @@ bool Trigger::reconfigure(Config *newconfig)
   {
     if (!Trigger::setMode(camera_, triggerMode_))
     {
+      // Possible if driver compiled against different version of libdc1394
+      ROS_ASSERT(triggerMode_ <= DC1394_TRIGGER_MODE_MAX);
+      newconfig->trigger_mode = Trigger::trigger_mode_names_[triggerMode_ - DC1394_TRIGGER_MODE_MIN];
       ROS_ERROR("Failed to set trigger mode");
       is_ok = false;
     }
@@ -455,6 +461,9 @@ bool Trigger::reconfigure(Config *newconfig)
     {
       if (!Trigger::setSource(camera_, triggerSource_))
       {
+        // Possible if driver compiled against different version of libdc1394
+        ROS_ASSERT(triggerSource_ <= DC1394_TRIGGER_SOURCE_MAX);
+        newconfig->trigger_source = Trigger::trigger_source_names_[triggerSource_ - DC1394_TRIGGER_SOURCE_MIN];
         ROS_ERROR("Failed to set trigger source");
         is_ok = false;
       }
@@ -474,6 +483,9 @@ bool Trigger::reconfigure(Config *newconfig)
   {
     if (!Trigger::setPolarity(camera_, triggerPolarity_))
     {
+      // Possible if driver compiled against different version of libdc1394
+      ROS_ASSERT(triggerPolarity_ <= DC1394_TRIGGER_ACTIVE_MAX);
+      newconfig->trigger_polarity = Trigger::trigger_polarity_names_[triggerPolarity_ - DC1394_TRIGGER_ACTIVE_MIN];
       ROS_ERROR("Failed to set trigger polarity");
       is_ok = false;
     }
