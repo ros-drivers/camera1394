@@ -427,6 +427,9 @@ bool Trigger::reconfigure(Config *newconfig)
     is_ok = false;
   }
 
+  // if external trigger is OFF then ignore rest of parameters
+  if (DC1394_OFF == on_off) return is_ok;
+
   on_off = (dc1394switch_t) newconfig->software_trigger;
   if (!Trigger::setSoftwareTriggerPowerState(camera_, on_off))
   {
