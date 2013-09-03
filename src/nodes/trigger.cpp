@@ -243,6 +243,7 @@ dc1394switch_t Trigger::getExternalTriggerPowerState(dc1394camera_t *camera)
     ROS_FATAL("getExternalTriggerPowerState() failed: %d", err);
     return (dc1394switch_t)-1; // failure
   }
+  externalTriggerPowerState_ = state;
   return state;
 }
 
@@ -267,6 +268,7 @@ bool Trigger::setExternalTriggerPowerState(dc1394camera_t *camera, dc1394switch_
     ROS_FATAL("setExternalTriggerPowerState() failed: %d", err);
     return false; // failure
   }
+  externalTriggerPowerState_ = state;
   ROS_DEBUG("setExternalTriggerPowerState(): %s", (state == DC1394_ON ? "ON" : "OFF"));
   return true; // success
 }
@@ -516,6 +518,9 @@ bool Trigger::initialize(Config *newconfig)
     ROS_ERROR("Failed to enumerate trigger sources");
     return false;
   }
+
+  // Update externalTriggerPowerState_ variable with current value
+  Trigger::getExternalTriggerPowerState(camera_);
 
   // configure trigger features
   return reconfigure(newconfig);

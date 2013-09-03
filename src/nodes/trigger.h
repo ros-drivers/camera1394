@@ -69,6 +69,8 @@ private:
   dc1394trigger_sources_t triggerSources_;
   dc1394trigger_polarity_t triggerPolarity_;
 
+  dc1394switch_t externalTriggerPowerState_;
+
   bool findTriggerMode(std::string str);
   bool findTriggerSource(std::string str);
   bool findTriggerPolarity(std::string str);
@@ -80,7 +82,7 @@ public:
    *  @param camera address of DC1394 camera structure.
    */
   Trigger(dc1394camera_t *camera):
-    camera_(camera), triggerSources_((dc1394trigger_sources_t){0})
+    camera_(camera), triggerSources_((dc1394trigger_sources_t){0}), externalTriggerPowerState_(DC1394_OFF)
   {};
 
   /** Return driver parameter name of DC1394 trigger_mode.
@@ -120,6 +122,17 @@ public:
       return trigger_polarity_names_[polarity - DC1394_TRIGGER_ACTIVE_MIN];
     else
       return "";
+  }
+
+  /** Checks whether external trigger power is ON or OFF.
+   *  This method uses cached value, which is updated every
+   *  time the settings are changed by user
+   *
+   *  @return true if external trigger power is ON; false if not
+   */
+  inline bool isPowered()
+  {
+    return (externalTriggerPowerState_ == DC1394_ON ? true : false);
   }
 
   bool enumSources(dc1394camera_t *camera, dc1394trigger_sources_t &sources);
