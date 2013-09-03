@@ -41,9 +41,8 @@
 #include <dc1394/dc1394.h>
 
 #include "camera1394/Camera1394Config.h"
+#include "trigger.h"
 typedef camera1394::Camera1394Config Config;
-
-class Trigger;                        // actually defined in trigger.h
 
 /** @file
 
@@ -67,6 +66,11 @@ public:
   ~Features() {};
   bool initialize(Config *newconfig);
   void reconfigure(Config *newconfig);
+
+  inline bool isTriggerPowered()
+  {
+	  return trigger_->isPowered();
+  }
 
 private:
   typedef int state_t;      ///< camera1394::Camera1394_* state values
