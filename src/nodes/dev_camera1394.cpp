@@ -449,17 +449,27 @@ std::string bayer_string(dc1394color_filter_t pattern, unsigned int bits)
 }
 
 /** Return an image frame */
-void Camera1394::readData(sensor_msgs::Image& image)
+bool Camera1394::readData(sensor_msgs::Image& image)
 {
   ROS_ASSERT_MSG(camera_, "Attempt to read from camera that is not open.");
 
   dc1394video_frame_t * frame = NULL;
-  dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_WAIT, &frame);
-  if (!frame)
+  if (features_->isTriggerPowered())
+  {
+    ROS_DEBUG("[%016lx] polling camera", camera_->guid);
+    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_POLL, &frame);
+    if (!frame) return false;
+  }
+  else
+  {
+    ROS_DEBUG("[%016lx] waiting camera", camera_->guid);
+    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_WAIT, &frame);
+    if (!frame)
     {
       CAM_EXCEPT(camera1394::Exception, "Unable to capture frame");
-      return;
+      return false;
     }
+  }
   
   uint8_t* capture_buffer;
 
@@ -486,7 +496,7 @@ void Camera1394::readData(sensor_msgs::Image& image)
           free(frame2.image);
           dc1394_capture_enqueue(camera_, frame);
           CAM_EXCEPT(camera1394::Exception, "Could not convert/debayer frames");
-          return;
+          return false;
         }
 
       capture_buffer = reinterpret_cast<uint8_t *>(frame2.image);
@@ -604,11 +614,13 @@ void Camera1394::readData(sensor_msgs::Image& image)
       else
         {
           CAM_EXCEPT(camera1394::Exception, "Unknown image mode");
-          return;
+          return false;
         }
     }
   dc1394_capture_enqueue(camera_, frame);
 
   if (DoBayerConversion_) 
     free(capture_buffer);
+
+  return true;
 }
