@@ -54,8 +54,6 @@
 #include "features.h"
 #include "modes.h"
 
-#define NUM_DMA_BUFFERS 4
-
 // @todo eliminate these macros
 //! Macro for throwing an exception with a message
 #define CAM_EXCEPT(except, msg)					\
@@ -351,7 +349,7 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
   //////////////////////////////////////////////////////////////
 
   // Set camera to use DMA, improves performance.
-  if (DC1394_SUCCESS != dc1394_capture_setup(camera_, NUM_DMA_BUFFERS,
+  if (DC1394_SUCCESS != dc1394_capture_setup(camera_, newconfig.num_dma_buffers,
                                              DC1394_CAPTURE_FLAGS_DEFAULT))
     {
       SafeCleanup();
