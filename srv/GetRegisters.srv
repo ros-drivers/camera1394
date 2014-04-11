@@ -1,0 +1,9 @@
+# Register offset
+uint64 offset
+# Number of registers; 0 counts as 1; does not apply for single-value registers.
+uint32 num_regs
+# Mode for Format7 register, feature for absolute register; otherwise it does not apply.
+uint32 mode
+---
+# Value of the register
+uint32[] value

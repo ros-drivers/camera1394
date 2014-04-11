@@ -48,6 +48,9 @@
 
 #include "dev_camera1394.h"
 #include "camera1394/Camera1394Config.h"
+#include "camera1394/GetRegisters.h"
+#include "camera1394/SetRegisters.h"
+
 typedef camera1394::Camera1394Config Config;
 
 /** @file
@@ -79,6 +82,8 @@ private:
   void publish(const sensor_msgs::ImagePtr &image);
   bool read(sensor_msgs::ImagePtr &image);
   void reconfig(camera1394::Camera1394Config &newconfig, uint32_t level);
+  bool getControlRegisters(camera1394::GetRegisters::Request &request, camera1394::GetRegisters::Response &response);
+  bool setControlRegisters(camera1394::SetRegisters::Request &request, camera1394::SetRegisters::Response &response);
 
   /** Non-recursive mutex for serializing callbacks with device polling. */
   boost::mutex mutex_;
@@ -106,6 +111,10 @@ private:
   /** image transport interfaces */
   boost::shared_ptr<image_transport::ImageTransport> it_;
   image_transport::CameraPublisher image_pub_;
+
+  /** camera register getter/setter services */
+  ros::ServiceServer get_control_registers_srv_;
+  ros::ServiceServer set_control_registers_srv_;
 
   /** diagnostics updater */
   diagnostic_updater::Updater diagnostics_;

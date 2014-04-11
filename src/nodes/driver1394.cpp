@@ -81,6 +81,8 @@ namespace camera1394_driver
     calibration_matches_(true),
     it_(new image_transport::ImageTransport(camera_nh_)),
     image_pub_(it_->advertiseCamera("image_raw", 1)),
+    get_control_registers_srv_(camera_nh_.advertiseService("get_control_registers", &Camera1394Driver::getControlRegisters, this)),
+    set_control_registers_srv_(camera_nh_.advertiseService("set_control_registers", &Camera1394Driver::setControlRegisters, this)),
     diagnostics_(),
     topic_diagnostics_min_freq_(0.),
     topic_diagnostics_max_freq_(1000.),
@@ -387,6 +389,20 @@ namespace camera1394_driver
   void Camera1394Driver::shutdown(void)
   {
     closeCamera();
+  }
+
+  /** get control registers callback */
+  bool Camera1394Driver::getControlRegisters(camera1394::GetRegisters::Request &request, camera1394::GetRegisters::Response &response)
+  {
+    if (request.num_regs < 1) request.num_regs = 1;
+    return dev_->getControlRegisters(request.offset, request.num_regs, response.value);
+  }
+
+  /** set control registers callback */
+  bool Camera1394Driver::setControlRegisters(camera1394::SetRegisters::Request &request, camera1394::SetRegisters::Response &response)
+  {
+    if (request.value.size() < 1) return true;
+    return dev_->setControlRegisters(request.offset, request.value);
   }
 
 }; // end namespace camera1394_driver

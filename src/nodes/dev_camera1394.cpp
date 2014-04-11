@@ -622,3 +622,25 @@ bool Camera1394::readData(sensor_msgs::Image& image)
 
   return true;
 }
+
+bool Camera1394::getControlRegisters(const uint64_t offset, const uint32_t num_regs, std::vector<uint32_t> &value)
+{
+  value.resize(num_regs);
+  if (DC1394_SUCCESS != dc1394_get_control_registers(camera_, offset, &value[0], num_regs))
+    {
+      ROS_WARN("Unable to get control register %lX.", offset);
+      return false;
+    }
+  return true;
+}
+
+/** set control registers */
+bool Camera1394::setControlRegisters(const uint64_t offset, const std::vector<uint32_t> &value)
+{
+  if (DC1394_SUCCESS != dc1394_set_control_registers(camera_, offset, &value[0], value.size()))
+    {
+      ROS_WARN("Unable to set control register %lX.", offset);
+      return false;
+    }
+  return true;
+}
