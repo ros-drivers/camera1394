@@ -33,6 +33,7 @@ find_library(DC1394_LIBRARY
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)
 
+# nothing builds against this package
 catkin_package(CATKIN_DEPENDS
                  camera_info_manager
                  diagnostic_updater
@@ -40,9 +41,12 @@ catkin_package(CATKIN_DEPENDS
                  image_transport
                  nodelet
                  roscpp
-                 tf
-               DEPENDS Boost DC1394_LIBRARY
-               LIBRARIES src/nodes/camera1394_nodelet)
+                 sensor_msgs
+                 tf)
+
+include_directories(${catkin_INCLUDE_DIRS}
+  ${DC1394_PKGCONF_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIR})
 
 # build package sources
 add_subdirectory(src/nodes)
@@ -53,7 +57,6 @@ install(FILES camera1394_nodelet.xml
 
 # driver unit tests
 if (CATKIN_ENABLE_TESTING)
-  message("-- ${PROJECT_NAME} unit testing enabled")
   #
   #  * When -DUSE_DEVICE=1 is configured: run tests that require some
   #    real 1394 camera to be present.
@@ -64,10 +67,8 @@ if (CATKIN_ENABLE_TESTING)
   if (${USE_DEVICE})
     add_rostest(tests/camera_node_hz.test)
     add_rostest(tests/camera_nodelet_hz.test)
-  endif ()
+  endif()
   
   add_rostest(tests/no_device_node.test)
   add_rostest(tests/no_device_nodelet.test)
-else ()
-  message("-- ${PROJECT_NAME} unit testing disabled")
-endif (CATKIN_ENABLE_TESTING)
+endif()
