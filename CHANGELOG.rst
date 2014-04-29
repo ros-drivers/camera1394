@@ -1,8 +1,8 @@
 Change history
 ==============
 
-1.9.5 (forthcoming)
--------------------
+1.9.5 (2014-04-29)
+------------------
 
  * Fix problems with catkin build exports (`#33`_).
  * Make number of DMA buffers a parameter (`#29`_), thanks to Tomas
