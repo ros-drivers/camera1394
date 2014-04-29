@@ -71,8 +71,8 @@ if (CATKIN_ENABLE_TESTING)
 
   if (${USE_TRIGGER})
     # build the software trigger node, but do not install it
-    add_executable(trigger_node tests/trigger_node.cpp)
-    target_link_libraries(trigger_node
+    add_executable(camera1394_trigger_node tests/trigger_node.cpp)
+    target_link_libraries(camera1394_trigger_node
                           ${catkin_LIBRARIES}
                           ${DC1394_LIBRARY})
     add_rostest(tests/trigger_node.test)

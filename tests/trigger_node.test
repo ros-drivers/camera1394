@@ -20,7 +20,7 @@
   </node>
 
   <!-- run 2Hz S/W triggering test node -->
-  <node pkg="camera1394" type="trigger_node" name="trigger_node"/>
+  <node pkg="camera1394" type="camera1394_trigger_node" name="trigger_node"/>
 
   <test test-name="camera_image_trigger_hz_test"
         pkg="rostest" type="hztest" name="hztest_image_trigger" >

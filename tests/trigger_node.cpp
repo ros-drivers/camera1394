@@ -155,7 +155,7 @@ private:
 /** Main node entry point. */
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "trigger_node");
+  ros::init(argc, argv, "camera1394_trigger_node");
   signal(SIGSEGV, &sigsegv_handler);
 
   TriggerNode trig;
