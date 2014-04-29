@@ -275,7 +275,7 @@ void Features::configure(dc1394feature_t feature, int *control,
   switch (*control)
     {
     case camera1394::Camera1394_Off:
-      setOff(finfo);
+      setPower(finfo, DC1394_OFF);
       break;
 
     case camera1394::Camera1394_Query:
@@ -285,14 +285,14 @@ void Features::configure(dc1394feature_t feature, int *control,
     case camera1394::Camera1394_Auto:
       if (!setMode(finfo, DC1394_FEATURE_MODE_AUTO))
         {
-          setOff(finfo);
+          setPower(finfo, DC1394_OFF);
         }
       break;
 
     case camera1394::Camera1394_Manual:
       if (!setMode(finfo, DC1394_FEATURE_MODE_MANUAL))
         {
-          setOff(finfo);
+          setPower(finfo, DC1394_OFF);
           break;
         }
 
@@ -372,7 +372,7 @@ void Features::configure(dc1394feature_t feature, int *control,
       setMode(finfo, DC1394_FEATURE_MODE_ONE_PUSH_AUTO);
 
       // Now turn the control off, so camera does not continue adjusting
-      setOff(finfo);
+      setPower(finfo, DC1394_OFF);
       break;
 
     case camera1394::Camera1394_None:
@@ -555,6 +555,9 @@ bool Features::setMode(dc1394feature_info_t *finfo, dc1394feature_mode_t mode)
   dc1394feature_t feature = finfo->id;
   if (hasMode(finfo, mode))
     {
+      // first, make sure the feature is powered on
+      setPower(finfo, DC1394_ON);
+
       ROS_DEBUG_STREAM("setting feature " << featureName(feature)
                        << " mode to " << modeName(mode));
       if (DC1394_SUCCESS !=
@@ -575,30 +578,32 @@ bool Features::setMode(dc1394feature_info_t *finfo, dc1394feature_mode_t mode)
   return true;
 }
 
-/** Set a feature Off.
+/** Set power for a feature On or Off.
  *
  *  @pre feature_set_ initialized for this camera
  *
  *  @param finfo pointer to information for this feature
+ *  @param on_off either DC1394_ON or DC1394_OFF
  */
-void Features::setOff(dc1394feature_info_t *finfo)
+void Features::setPower(dc1394feature_info_t *finfo, dc1394switch_t on_off)
 {
   dc1394feature_t feature = finfo->id;
   if (finfo->on_off_capable)
     {
-      ROS_DEBUG_STREAM("setting feature " << featureName(feature) << " Off");
+      ROS_DEBUG_STREAM("Setting power for feature " << featureName(feature)
+                       << " to " << on_off);
       if (DC1394_SUCCESS !=
-          dc1394_feature_set_power(camera_, feature, DC1394_OFF))
+          dc1394_feature_set_power(camera_, feature, on_off))
         {
           ROS_WARN_STREAM("failed to set feature " << featureName(feature)
-                          << " Off ");
+                          << " power to " << on_off);
         }
     }
   else
     {
-      // This device does not support turning this feature off.
-      // Inform the user, but pretend it worked.
-      ROS_DEBUG_STREAM("no Off mode for feature " << featureName(feature));
+      // This device does not support turning this feature on or off.
+      // That's OK.
+      ROS_DEBUG_STREAM("no power control for feature " << featureName(feature));
     }
 }
 

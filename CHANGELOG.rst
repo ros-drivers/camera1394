@@ -1,6 +1,12 @@
 Change history
 ==============
 
+1.9.5 (forthcoming)
+-------------------
+
+ * Turn power on for a feature before setting its operating mode
+   (`#15`_), thanks to Brice Rebsamen.
+
 1.9.4 (2013-08-03)
 ------------------
 
@@ -120,6 +126,7 @@ Change history
 .. _`#7`: https://github.com/ros-drivers/camera1394/issues/7
 .. _`#10`: https://github.com/ros-drivers/camera1394/issues/10
 .. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
+.. _`#15`: https://github.com/ros-drivers/camera1394/issues/15
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
