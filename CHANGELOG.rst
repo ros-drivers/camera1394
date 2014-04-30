@@ -1,12 +1,20 @@
 Change history
 ==============
 
-1.9.5 (forthcoming)
--------------------
+1.10.0 (forthcoming)
+--------------------
 
+ * Initial Indigo release.
  * Add external triggering support (`#9`_), thanks to Boris Gromov.
+
+1.9.5 (2014-04-29)
+------------------
+
+ * Fix problems with catkin build exports (`#33`_).
+ * Make number of DMA buffers a parameter (`#29`_), thanks to Tomas
+   Petricek.
  * Turn power on for a feature before setting its operating mode
-   (`#15`_).
+   (`#15`_), thanks to Brice Rebsamen.
 
 1.9.4 (2013-08-03)
 ------------------
@@ -129,6 +137,8 @@ Change history
 .. _`#10`: https://github.com/ros-drivers/camera1394/issues/10
 .. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
 .. _`#15`: https://github.com/ros-drivers/camera1394/issues/15
+.. _`#29`: https://github.com/ros-drivers/camera1394/issues/29
+.. _`#33`: https://github.com/ros-drivers/camera1394/issues/33
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
 .. _`#4261`: https://code.ros.org/trac/ros-pkg/ticket/4261
