@@ -13,8 +13,9 @@ This package has no released code API.
   ROS release.  It will not always work with all previous releases.
   Sometimes, it may not work at all.
 
-The current master works with Hydro and Groovy.  To build for Fuerte,
-check out the fuerte-devel branch instead of master.
+The current ``master`` branch works with Hydro and Indigo.  To build
+for Fuerte or Groovy, check out the ``fuerte-devel`` or
+``groovy-devel`` branch instead.
 
 .. _Camera1394: http://www.ros.org/wiki/camera1394
 .. _image_pipeline: http://www.ros.org/wiki/image_pipeline
