@@ -76,22 +76,29 @@ namespace camera1394
     int close();
     bool readData (sensor_msgs::Image &image);
 
-    /** @brief getControlRegisters get camera control registers
-     *
-     *  @param offset register offset
-     *  @param num_regs number of registers to read
-     *  @param value values read from the register
-     *  @return true if succeeded
-     */
-    bool getControlRegisters(const uint64_t offset, const uint32_t num_regs, std::vector<uint32_t> &value);
-
-    /** @brief setControlRegisters set camera control registers
-     *
-     *  @param offset register offset
-     *  @param value vector of values to be set
-     *  @return true if succeeded
-     */
-    bool setControlRegisters(const uint64_t offset, const std::vector<uint32_t> &value);
+    bool getControlRegisters(const uint64_t offset, const uint32_t num_regs,
+                             std::vector<uint32_t> &val);
+    bool setControlRegisters(const uint64_t offset,
+                             const std::vector<uint32_t> &val);
+    bool getAbsoluteRegister(const uint64_t offset, const uint32_t feature,
+                             uint32_t &val);
+    bool setAbsoluteRegister(const uint64_t offset, const uint32_t feature,
+                             const uint32_t val);
+    bool getFormat7Register(const uint64_t offset, const uint32_t mode,
+                            uint32_t &val);
+    bool setFormat7Register(const uint64_t offset, const uint32_t mode,
+                            const uint32_t val);
+    bool getAdvancedControlRegisters(const uint64_t offset,
+                                     const uint32_t num_regs,
+                                     std::vector<uint32_t> &val);
+    bool setAdvancedControlRegisters(const uint64_t offset,
+                                     const std::vector<uint32_t> &val);
+    bool getPIORegister(const uint64_t offset, uint32_t &val);
+    bool setPIORegister(const uint64_t offset, const uint32_t val);
+    bool getSIORegister(const uint64_t offset, uint32_t &val);
+    bool setSIORegister(const uint64_t offset, const uint32_t val);
+    bool getStrobeRegister(const uint64_t offset, uint32_t &val);
+    bool setStrobeRegister(const uint64_t offset, const uint32_t val);
 
     /** check whether CameraInfo matches current video mode
      *

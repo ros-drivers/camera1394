@@ -32,8 +32,8 @@ find_library(DC1394_LIBRARY
 )
 
 add_service_files(FILES
-  GetRegisters.srv
-  SetRegisters.srv)
+  GetCameraRegisters.srv
+  SetCameraRegisters.srv)
 
 generate_messages(DEPENDENCIES std_msgs)
 

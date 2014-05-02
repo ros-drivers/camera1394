@@ -1,7 +1,0 @@
-# Register offset
-uint64 offset
-# Value to set; call with an empty value succeed without any effect
-uint32[] value
-# Mode for Format7 register, feature for absolute register; otherwise it does not apply.
-uint32 mode
----

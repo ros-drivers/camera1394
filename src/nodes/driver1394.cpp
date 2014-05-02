@@ -81,8 +81,12 @@ namespace camera1394_driver
     calibration_matches_(true),
     it_(new image_transport::ImageTransport(camera_nh_)),
     image_pub_(it_->advertiseCamera("image_raw", 1)),
-    get_control_registers_srv_(camera_nh_.advertiseService("get_control_registers", &Camera1394Driver::getControlRegisters, this)),
-    set_control_registers_srv_(camera_nh_.advertiseService("set_control_registers", &Camera1394Driver::setControlRegisters, this)),
+    get_camera_registers_srv_(camera_nh_.advertiseService(
+                                "get_camera_registers",
+                                &Camera1394Driver::getCameraRegisters, this)),
+    set_camera_registers_srv_(camera_nh_.advertiseService(
+                                "set_camera_registers",
+                                &Camera1394Driver::setCameraRegisters, this)),
     diagnostics_(),
     topic_diagnostics_min_freq_(0.),
     topic_diagnostics_max_freq_(1000.),
@@ -391,18 +395,110 @@ namespace camera1394_driver
     closeCamera();
   }
 
-  /** get control registers callback */
-  bool Camera1394Driver::getControlRegisters(camera1394::GetRegisters::Request &request, camera1394::GetRegisters::Response &response)
+  /** Callback for getting camera control and status registers (CSR) */
+  bool Camera1394Driver::getCameraRegisters(
+      camera1394::GetCameraRegisters::Request &request,
+      camera1394::GetCameraRegisters::Response &response)
   {
-    if (request.num_regs < 1) request.num_regs = 1;
-    return dev_->getControlRegisters(request.offset, request.num_regs, response.value);
+    typedef camera1394::GetCameraRegisters::Request Request;
+    boost::mutex::scoped_lock lock(mutex_);
+    if (state_ == Driver::CLOSED)
+      {
+        return false;
+      }
+    if (request.num_regs < 1
+        || (request.type != Request::TYPE_CONTROL
+            && request.type == Request::TYPE_ADVANCED_CONTROL))
+      {
+        request.num_regs = 1;
+      }
+    response.value.resize(request.num_regs);
+
+    bool success = false;
+    switch (request.type)
+      {
+      case Request::TYPE_CONTROL:
+        success = dev_->getControlRegisters(request.offset, request.num_regs,
+                                            response.value);
+        break;
+      case Request::TYPE_ABSOLUTE:
+        success = dev_->getAbsoluteRegister(request.offset, request.mode,
+                                            response.value[0]);
+        break;
+      case Request::TYPE_FORMAT7:
+        success = dev_->getFormat7Register(request.offset, request.mode,
+                                           response.value[0]);
+        break;
+      case Request::TYPE_ADVANCED_CONTROL:
+        success = dev_->getAdvancedControlRegisters(request.offset,
+                                                    request.num_regs,
+                                                    response.value);
+        break;
+      case Request::TYPE_PIO:
+        success = dev_->getPIORegister(request.offset, response.value[0]);
+        break;
+      case Request::TYPE_SIO:
+        success = dev_->getSIORegister(request.offset, response.value[0]);
+        break;
+      case Request::TYPE_STROBE:
+        success = dev_->getStrobeRegister(request.offset, response.value[0]);
+        break;
+      }
+
+    if (!success)
+      {
+        ROS_WARN("[%s] getting register failed: type %u, offset %lu",
+                 camera_name_.c_str(), request.type, request.offset);
+      }
+    return success;
   }
 
-  /** set control registers callback */
-  bool Camera1394Driver::setControlRegisters(camera1394::SetRegisters::Request &request, camera1394::SetRegisters::Response &response)
+  /** Callback for setting camera control and status registers (CSR) */
+  bool Camera1394Driver::setCameraRegisters(
+      camera1394::SetCameraRegisters::Request &request,
+      camera1394::SetCameraRegisters::Response &response)
   {
-    if (request.value.size() < 1) return true;
-    return dev_->setControlRegisters(request.offset, request.value);
+    typedef camera1394::SetCameraRegisters::Request Request;
+    if (request.value.size() == 0)
+      return true;
+    boost::mutex::scoped_lock lock(mutex_);
+    if (state_ == Driver::CLOSED)
+      return false;
+    bool success = false;
+    switch (request.type)
+      {
+      case Request::TYPE_CONTROL:
+        success = dev_->setControlRegisters(request.offset, request.value);
+        break;
+      case Request::TYPE_ABSOLUTE:
+        success = dev_->setAbsoluteRegister(request.offset, request.mode,
+                                            request.value[0]);
+        break;
+      case Request::TYPE_FORMAT7:
+        success = dev_->setFormat7Register(request.offset, request.mode,
+                                           request.value[0]);
+        break;
+      case Request::TYPE_ADVANCED_CONTROL:
+        success = dev_->setAdvancedControlRegisters(request.offset,
+                                                    request.value);
+        break;
+      case Request::TYPE_PIO:
+        success = dev_->setPIORegister(request.offset, request.value[0]);
+        break;
+      case Request::TYPE_SIO:
+        success = dev_->setSIORegister(request.offset, request.value[0]);
+        break;
+      case Request::TYPE_STROBE:
+        success = dev_->setStrobeRegister(request.offset, request.value[0]);
+        break;
+      }
+
+    if (!success)
+      {
+        ROS_WARN("[%s] setting register failed: type %u, offset %lu",
+                 camera_name_.c_str(), request.type, request.offset);
+      }
+    return success;
   }
 
 }; // end namespace camera1394_driver

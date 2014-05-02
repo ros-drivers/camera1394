@@ -623,24 +623,122 @@ bool Camera1394::readData(sensor_msgs::Image& image)
   return true;
 }
 
-bool Camera1394::getControlRegisters(const uint64_t offset, const uint32_t num_regs, std::vector<uint32_t> &value)
+// Accessors for camera control and status registers (CSR),
+// wrapping dc1394 functions.
+
+/** Get camera control registers.
+ *
+ *  @param offset register offset
+ *  @param num_regs number of registers to read
+ *  @param val buffer to fill in (must be preallocated)
+ *  @return true if succeeded
+ */
+bool Camera1394::getControlRegisters(const uint64_t offset,
+                                     const uint32_t num_regs,
+                                     std::vector<uint32_t> &val)
 {
-  value.resize(num_regs);
-  if (DC1394_SUCCESS != dc1394_get_control_registers(camera_, offset, &value[0], num_regs))
-    {
-      ROS_WARN("Unable to get control register %lX.", offset);
-      return false;
-    }
-  return true;
+  int err = dc1394_get_control_registers(camera_, offset, &val[0], num_regs);
+  return (DC1394_SUCCESS == err);
+}
+/** Set camera camera registers.
+ *
+ *  @param offset register offset
+ *  @param val values to set
+ *  @return true if succeeded
+ */
+bool Camera1394::setControlRegisters(const uint64_t offset,
+                                     const std::vector<uint32_t> &val)
+{
+  int err = dc1394_set_control_registers(camera_, offset, &val[0], val.size());
+  return (DC1394_SUCCESS == err);
 }
 
-/** set control registers */
-bool Camera1394::setControlRegisters(const uint64_t offset, const std::vector<uint32_t> &value)
+/** Get feature absolute value register. */
+bool Camera1394::getAbsoluteRegister(const uint64_t offset,
+                                     const uint32_t feature,
+                                     uint32_t &val)
 {
-  if (DC1394_SUCCESS != dc1394_set_control_registers(camera_, offset, &value[0], value.size()))
-    {
-      ROS_WARN("Unable to set control register %lX.", offset);
-      return false;
-    }
-  return true;
+  int err = dc1394_get_absolute_register(camera_, feature, offset, &val);
+  return (DC1394_SUCCESS == err);
+}
+/** Set feature absolute value register. */
+bool Camera1394::setAbsoluteRegister(const uint64_t offset,
+                                     const uint32_t feature,
+                                     const uint32_t val)
+{
+  int err = dc1394_set_absolute_register(camera_, feature, offset, val);
+  return (DC1394_SUCCESS == err);
+}
+
+/** Get Format7 register. */
+bool Camera1394::getFormat7Register(const uint64_t offset,
+                                    const uint32_t mode,
+                                    uint32_t &val)
+{
+  int err = dc1394_get_format7_register(camera_, mode, offset, &val);
+  return (DC1394_SUCCESS == err);
+}
+/** Set Format7 register. */
+bool Camera1394::setFormat7Register(const uint64_t offset,
+                                    const uint32_t mode,
+                                    const uint32_t val)
+{
+  int err = dc1394_set_format7_register(camera_, mode, offset, val);
+  return (DC1394_SUCCESS == err);
+}
+
+/** Get advanced feature registers. */
+bool Camera1394::getAdvancedControlRegisters(const uint64_t offset,
+                                             const uint32_t num_regs,
+                                             std::vector<uint32_t> &val)
+{
+  int err = dc1394_get_adv_control_registers(camera_, offset, &val[0], num_regs);
+  return (DC1394_SUCCESS == err);
+}
+/** Set advanced feature registers. */
+bool Camera1394::setAdvancedControlRegisters(const uint64_t offset,
+                                             const std::vector<uint32_t> &val)
+{
+  int err = dc1394_set_adv_control_registers(camera_, offset, &val[0],
+                                             val.size());
+  return (DC1394_SUCCESS == err);
+}
+
+/** Get parallel input/output (PIO) register. */
+bool Camera1394::getPIORegister(const uint64_t offset, uint32_t &val)
+{
+  int err = dc1394_get_PIO_register(camera_, offset, &val);
+  return (DC1394_SUCCESS == err);
+}
+/** Set parallel input/output (PIO) register. */
+bool Camera1394::setPIORegister(const uint64_t offset, const uint32_t val)
+{
+  int err = dc1394_set_PIO_register(camera_, offset, val);
+  return (DC1394_SUCCESS == err);
+}
+
+/** Get serial input/output (SIO) register. */
+bool Camera1394::getSIORegister(const uint64_t offset, uint32_t &val)
+{
+  int err = dc1394_get_SIO_register(camera_, offset, &val);
+  return (DC1394_SUCCESS == err);
+}
+/** Set serial input/output (SIO) register. */
+bool Camera1394::setSIORegister(const uint64_t offset, const uint32_t val)
+{
+  int err = dc1394_set_SIO_register(camera_, offset, val);
+  return (DC1394_SUCCESS == err);
+}
+
+/** Get strobe register. */
+bool Camera1394::getStrobeRegister(const uint64_t offset, uint32_t &val)
+{
+  int err = dc1394_get_strobe_register(camera_, offset, &val);
+  return (DC1394_SUCCESS == err);
+}
+/** Set strobe register. */
+bool Camera1394::setStrobeRegister(const uint64_t offset, const uint32_t val)
+{
+  int err = dc1394_set_strobe_register(camera_, offset, val);
+  return (DC1394_SUCCESS == err);
 }

@@ -48,8 +48,8 @@
 
 #include "dev_camera1394.h"
 #include "camera1394/Camera1394Config.h"
-#include "camera1394/GetRegisters.h"
-#include "camera1394/SetRegisters.h"
+#include "camera1394/GetCameraRegisters.h"
+#include "camera1394/SetCameraRegisters.h"
 
 typedef camera1394::Camera1394Config Config;
 
@@ -82,8 +82,11 @@ private:
   void publish(const sensor_msgs::ImagePtr &image);
   bool read(sensor_msgs::ImagePtr &image);
   void reconfig(camera1394::Camera1394Config &newconfig, uint32_t level);
-  bool getControlRegisters(camera1394::GetRegisters::Request &request, camera1394::GetRegisters::Response &response);
-  bool setControlRegisters(camera1394::SetRegisters::Request &request, camera1394::SetRegisters::Response &response);
+
+  bool getCameraRegisters(camera1394::GetCameraRegisters::Request &request,
+                          camera1394::GetCameraRegisters::Response &response);
+  bool setCameraRegisters(camera1394::SetCameraRegisters::Request &request,
+                          camera1394::SetCameraRegisters::Response &response);
 
   /** Non-recursive mutex for serializing callbacks with device polling. */
   boost::mutex mutex_;
@@ -112,9 +115,9 @@ private:
   boost::shared_ptr<image_transport::ImageTransport> it_;
   image_transport::CameraPublisher image_pub_;
 
-  /** camera register getter/setter services */
-  ros::ServiceServer get_control_registers_srv_;
-  ros::ServiceServer set_control_registers_srv_;
+  /** services for getting/setting camera control and status registers (CSR) */
+  ros::ServiceServer get_camera_registers_srv_;
+  ros::ServiceServer set_camera_registers_srv_;
 
   /** diagnostics updater */
   diagnostic_updater::Updater diagnostics_;
