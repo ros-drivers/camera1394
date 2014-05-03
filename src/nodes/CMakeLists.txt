@@ -5,6 +5,7 @@ set(CAMERA1394_SOURCES
   features.cpp
   format7.cpp
   modes.cpp
+  registers.cpp
   trigger.cpp)
 
 ## The following used to be necessary rosbuild on Mac OSX.

@@ -48,6 +48,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include "camera1394/Camera1394Config.h"
+#include "registers.h"
 #include "format7.h"
 
 class Features;                      // actually defined in features.h
@@ -75,30 +76,6 @@ namespace camera1394
     int open(camera1394::Camera1394Config &newconfig);
     int close();
     bool readData (sensor_msgs::Image &image);
-
-    bool getControlRegisters(const uint64_t offset, const uint32_t num_regs,
-                             std::vector<uint32_t> &val);
-    bool setControlRegisters(const uint64_t offset,
-                             const std::vector<uint32_t> &val);
-    bool getAbsoluteRegister(const uint64_t offset, const uint32_t feature,
-                             uint32_t &val);
-    bool setAbsoluteRegister(const uint64_t offset, const uint32_t feature,
-                             const uint32_t val);
-    bool getFormat7Register(const uint64_t offset, const uint32_t mode,
-                            uint32_t &val);
-    bool setFormat7Register(const uint64_t offset, const uint32_t mode,
-                            const uint32_t val);
-    bool getAdvancedControlRegisters(const uint64_t offset,
-                                     const uint32_t num_regs,
-                                     std::vector<uint32_t> &val);
-    bool setAdvancedControlRegisters(const uint64_t offset,
-                                     const std::vector<uint32_t> &val);
-    bool getPIORegister(const uint64_t offset, uint32_t &val);
-    bool setPIORegister(const uint64_t offset, const uint32_t val);
-    bool getSIORegister(const uint64_t offset, uint32_t &val);
-    bool setSIORegister(const uint64_t offset, const uint32_t val);
-    bool getStrobeRegister(const uint64_t offset, uint32_t &val);
-    bool setStrobeRegister(const uint64_t offset, const uint32_t val);
 
     /** check whether CameraInfo matches current video mode
      *
@@ -132,6 +109,7 @@ namespace camera1394
 
     std::string device_id_;
     boost::shared_ptr<Features> features_;
+    boost::shared_ptr<Registers> registers_;
 
   private:
       

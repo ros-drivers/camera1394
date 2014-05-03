@@ -408,7 +408,7 @@ namespace camera1394_driver
       }
     if (request.num_regs < 1
         || (request.type != Request::TYPE_CONTROL
-            && request.type == Request::TYPE_ADVANCED_CONTROL))
+            && request.type != Request::TYPE_ADVANCED_CONTROL))
       {
         request.num_regs = 1;
       }
@@ -418,30 +418,32 @@ namespace camera1394_driver
     switch (request.type)
       {
       case Request::TYPE_CONTROL:
-        success = dev_->getControlRegisters(request.offset, request.num_regs,
-                                            response.value);
+        success = dev_->registers_->getControlRegisters(
+              request.offset, request.num_regs, response.value);
         break;
       case Request::TYPE_ABSOLUTE:
-        success = dev_->getAbsoluteRegister(request.offset, request.mode,
-                                            response.value[0]);
+        success = dev_->registers_->getAbsoluteRegister(
+              request.offset, request.mode, response.value[0]);
         break;
       case Request::TYPE_FORMAT7:
-        success = dev_->getFormat7Register(request.offset, request.mode,
-                                           response.value[0]);
+        success = dev_->registers_->getFormat7Register(
+              request.offset, request.mode, response.value[0]);
         break;
       case Request::TYPE_ADVANCED_CONTROL:
-        success = dev_->getAdvancedControlRegisters(request.offset,
-                                                    request.num_regs,
-                                                    response.value);
+        success = dev_->registers_->getAdvancedControlRegisters(
+              request.offset, request.num_regs, response.value);
         break;
       case Request::TYPE_PIO:
-        success = dev_->getPIORegister(request.offset, response.value[0]);
+        success = dev_->registers_->getPIORegister(
+              request.offset, response.value[0]);
         break;
       case Request::TYPE_SIO:
-        success = dev_->getSIORegister(request.offset, response.value[0]);
+        success = dev_->registers_->getSIORegister(
+              request.offset, response.value[0]);
         break;
       case Request::TYPE_STROBE:
-        success = dev_->getStrobeRegister(request.offset, response.value[0]);
+        success = dev_->registers_->getStrobeRegister(
+              request.offset, response.value[0]);
         break;
       }
 
@@ -468,28 +470,32 @@ namespace camera1394_driver
     switch (request.type)
       {
       case Request::TYPE_CONTROL:
-        success = dev_->setControlRegisters(request.offset, request.value);
+        success = dev_->registers_->setControlRegisters(
+              request.offset, request.value);
         break;
       case Request::TYPE_ABSOLUTE:
-        success = dev_->setAbsoluteRegister(request.offset, request.mode,
-                                            request.value[0]);
+        success = dev_->registers_->setAbsoluteRegister(
+              request.offset, request.mode, request.value[0]);
         break;
       case Request::TYPE_FORMAT7:
-        success = dev_->setFormat7Register(request.offset, request.mode,
-                                           request.value[0]);
+        success = dev_->registers_->setFormat7Register(
+              request.offset, request.mode, request.value[0]);
         break;
       case Request::TYPE_ADVANCED_CONTROL:
-        success = dev_->setAdvancedControlRegisters(request.offset,
-                                                    request.value);
+        success = dev_->registers_->setAdvancedControlRegisters(
+              request.offset, request.value);
         break;
       case Request::TYPE_PIO:
-        success = dev_->setPIORegister(request.offset, request.value[0]);
+        success = dev_->registers_->setPIORegister(
+              request.offset, request.value[0]);
         break;
       case Request::TYPE_SIO:
-        success = dev_->setSIORegister(request.offset, request.value[0]);
+        success = dev_->registers_->setSIORegister(
+              request.offset, request.value[0]);
         break;
       case Request::TYPE_STROBE:
-        success = dev_->setStrobeRegister(request.offset, request.value[0]);
+        success = dev_->registers_->setStrobeRegister(
+              request.offset, request.value[0]);
         break;
       }
 
