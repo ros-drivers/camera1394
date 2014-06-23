@@ -371,6 +371,8 @@ int Camera1394::open(camera1394::Camera1394Config &newconfig)
 
   // TODO: pass newconfig here and eliminate initialize() method
   features_.reset(new Features(camera_));
+
+  registers_.reset(new Registers(camera_));
  
   return 0;
 }

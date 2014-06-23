@@ -48,6 +48,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include "camera1394/Camera1394Config.h"
+#include "registers.h"
 #include "format7.h"
 
 class Features;                      // actually defined in features.h
@@ -108,6 +109,7 @@ namespace camera1394
 
     std::string device_id_;
     boost::shared_ptr<Features> features_;
+    boost::shared_ptr<Registers> registers_;
 
   private:
       
