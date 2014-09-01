@@ -5,11 +5,14 @@ Change history
 --------------------
 
  * Initial Indigo release.
- * Add external triggering support (`#9`_), thanks to Boris Gromov.
+ * Add DC1394 trigger support (`#9`_), thanks to Boris Gromov.
+ * Add services to get and set camera-specific registers (`#32`_),
+   thanks to Tomas Petricek.
 
 1.9.5 (2014-04-29)
 ------------------
 
+ * Hydro release update.
  * Fix problems with catkin build exports (`#33`_).
  * Make number of DMA buffers a parameter (`#29`_), thanks to Tomas
    Petricek.
@@ -138,6 +141,7 @@ Change history
 .. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
 .. _`#15`: https://github.com/ros-drivers/camera1394/issues/15
 .. _`#29`: https://github.com/ros-drivers/camera1394/issues/29
+.. _`#32`: https://github.com/ros-drivers/camera1394/pull/32
 .. _`#33`: https://github.com/ros-drivers/camera1394/issues/33
 .. _`#4222`: https://code.ros.org/trac/ros-pkg/ticket/4222
 .. _`#4251`: https://code.ros.org/trac/ros-pkg/ticket/4251
