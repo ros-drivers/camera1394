@@ -1,8 +1,8 @@
 Change history
 ==============
 
-1.10.0 (forthcoming)
---------------------
+1.10.0 (2014-09-01)
+-------------------
 
  * Initial Indigo release.
  * Add DC1394 trigger support (`#9`_), thanks to Boris Gromov.
