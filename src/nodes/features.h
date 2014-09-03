@@ -76,10 +76,10 @@ private:
   typedef int state_t;      ///< camera1394::Camera1394_* state values
 
   void configure(dc1394feature_t feature, int *control,
-                 double *value, double *value2=NULL);
+                 int *value, int *value2=NULL);
   state_t getState(dc1394feature_info_t *finfo);
   void getValues(dc1394feature_info_t *finfo,
-                 double *value, double *value2);
+                 int *value, int *value2);
 
   /** Does this camera feature support a given mode?
    *
@@ -117,11 +117,11 @@ private:
   void setPower(dc1394feature_info_t *finfo, dc1394switch_t on_off);
   void updateIfChanged(dc1394feature_t feature,
                        int old_control, int *control,
-                       double old_value, double *value);
+                       int old_value, int *value);
   void updateIfChanged(dc1394feature_t feature,
                        int old_control, int *control,
-                       double old_value, double *value,
-                       double old_value2, double *value2);
+                       int old_value, int *value,
+                       int old_value2, int *value2);
 
   dc1394camera_t *camera_;              ///< current camera
   dc1394featureset_t feature_set_;      ///< that camera's feature set
