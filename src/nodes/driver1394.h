@@ -99,6 +99,8 @@ private:
   std::string camera_name_;             // camera name
   ros::Rate cycle_;                     // polling rate when closed
   uint32_t retries_;                    // count of openCamera() retries
+  float output_rate_hz_;				// output (published) image rate in Hz (0 to disable)
+  ros::Time last_camera_poll_;			// timestamp of last time camera was polled
 
   /** libdc1394 camera device interface */
   boost::shared_ptr<camera1394::Camera1394> dev_;

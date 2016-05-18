@@ -75,6 +75,7 @@ namespace camera1394_driver
     camera_name_("camera"),
     cycle_(1.0),                        // slow poll when closed
     retries_(0),
+    last_camera_poll_(0),
     dev_(new camera1394::Camera1394()),
     srv_(priv_nh),
     cinfo_(new camera_info_manager::CameraInfoManager(camera_nh_)),
@@ -95,7 +96,10 @@ namespace camera1394_driver
 		       (&topic_diagnostics_min_freq_,
 			&topic_diagnostics_max_freq_, 0.1, 10),
 		       diagnostic_updater::TimeStampStatusParam())
-  {}
+  {
+	priv_nh_.param<float>( "output_rate_hz", output_rate_hz_, 0 ); // 0 to disable
+	ROS_INFO("%s: output rate=%.2fHz", ROS_PACKAGE_NAME, output_rate_hz_ );
+  }
 
   Camera1394Driver::~Camera1394Driver()
   {}
@@ -190,6 +194,7 @@ namespace camera1394_driver
     // seconds before getting to run.  So, we avoid acquiring the lock
     // if there is a reconfig() pending.
     bool do_sleep = true;
+
     if (!reconfiguring_)
       {
         boost::mutex::scoped_lock lock(mutex_);
@@ -200,12 +205,24 @@ namespace camera1394_driver
         do_sleep = (state_ == Driver::CLOSED);
         if (!do_sleep)                  // openCamera() succeeded?
           {
-            // driver is open, read the next image still holding lock
-            sensor_msgs::ImagePtr image(new sensor_msgs::Image);
-            if (read(image))
-              {
-                publish(image);
-              }
+ 	    	ros::Time time_now = ros::Time::now();
+      	    float rate_hz = 1.0 / ( time_now - last_camera_poll_ ).toSec();
+
+			// If we need a new image to achieve the requested output 
+			// rate (or if disabled =0Hz) then read and publish the image. 
+			// Otherwise, just poll the camera without processing image data. 
+			
+			if ( output_rate_hz_ <= 0 || rate_hz <= output_rate_hz_ )
+			{
+				sensor_msgs::ImagePtr image(new sensor_msgs::Image);
+				if ( read(image) ) { publish(image); last_camera_poll_ = time_now; }
+				else ROS_WARN_THROTTLE( 1, "Failed to read image" );
+			}
+			else // poll camera without processing or publishing frame
+			{
+				try { dev_->pollNoRead(); }
+				catch( const std::exception& e ) { ROS_WARN_THROTTLE( 1, "Failed to poll camera, error=%s", e.what() ); } 
+			}
           }
       } // release mutex lock
 

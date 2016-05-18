@@ -76,6 +76,7 @@ namespace camera1394
     int open(camera1394::Camera1394Config &newconfig);
     int close();
     bool readData (sensor_msgs::Image &image);
+    bool pollNoRead();
 
     /** check whether CameraInfo matches current video mode
      *
