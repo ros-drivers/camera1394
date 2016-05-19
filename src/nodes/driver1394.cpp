@@ -75,6 +75,7 @@ namespace camera1394_driver
     camera_name_("camera"),
     cycle_(1.0),                        // slow poll when closed
     retries_(0),
+    consecutive_read_errors_(0),
     dev_(new camera1394::Camera1394()),
     srv_(priv_nh),
     cinfo_(new camera_info_manager::CameraInfoManager(camera_nh_)),
@@ -175,6 +176,7 @@ namespace camera1394_driver
     topic_diagnostics_min_freq_ = newconfig.frame_rate - delta;
     topic_diagnostics_max_freq_ = newconfig.frame_rate + delta;
 
+	consecutive_read_errors_ = 0;
     return success;
   }
 
@@ -205,7 +207,13 @@ namespace camera1394_driver
             if (read(image))
               {
                 publish(image);
+                consecutive_read_errors_=0;
               }
+            else if ( ++consecutive_read_errors_ > config_.max_consecutive_errors && config_.max_consecutive_errors > 0 )
+            {
+            	ROS_WARN("reached %lu consecutive read errrors, disconnecting", consecutive_read_errors_ );
+            	closeCamera();
+            }
           }
       } // release mutex lock
 
