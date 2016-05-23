@@ -93,15 +93,17 @@ private:
 
   /** driver state variables */
   volatile driver_base::Driver::state_t state_; // current driver state
-  volatile bool reconfiguring_;         // true when reconfig() running
+  volatile bool reconfiguring_;        // true when reconfig() running
   ros::NodeHandle priv_nh_;             // private node handle
   ros::NodeHandle camera_nh_;           // camera name space handle
   std::string camera_name_;             // camera name
   ros::Rate cycle_;                     // polling rate when closed
-  uint32_t retries_;                    // count of openCamera() retries
-  float output_rate_hz_;				// output (published) image rate in Hz (0 to disable)
-  ros::Time last_camera_poll_;			// timestamp of last time camera was polled
-
+  uint32_t retries_;                   // count of openCamera() retries
+  uint32_t output_frame_count_;			// output frame count
+  float output_rate_hz_;               // output (published) image rate in Hz (0 to disable)
+  ros::Time camera_time_ref_;           // time camera connection was created
+  uint32_t consecutive_read_errors_;   // number of consecutive read errors
+  
   /** libdc1394 camera device interface */
   boost::shared_ptr<camera1394::Camera1394> dev_;
 
