@@ -448,6 +448,32 @@ std::string bayer_string(dc1394color_filter_t pattern, unsigned int bits)
   return sensor_msgs::image_encodings::MONO8;
 }
 
+/** Poll sensor without reading data */
+bool Camera1394::pollNoRead()
+{
+  dc1394video_frame_t * frame = NULL;
+
+  if (features_->isTriggerPowered())
+  {
+    ROS_DEBUG("[%016lx] polling camera", camera_->guid);
+    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_POLL, &frame);
+    if (!frame) return false;
+  }
+  else
+  {
+    ROS_DEBUG("[%016lx] waiting camera", camera_->guid);
+    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_WAIT, &frame);
+    if (!frame)
+    {
+      CAM_EXCEPT(camera1394::Exception, "Unable to capture frame");
+      return false;
+    }
+  }
+
+  dc1394_capture_enqueue(camera_, frame);
+  return true;
+}
+
 /** Return an image frame */
 bool Camera1394::readData(sensor_msgs::Image& image)
 {

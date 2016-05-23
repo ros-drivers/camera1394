@@ -92,11 +92,14 @@ namespace camera1394_driver
     topic_diagnostics_min_freq_(0.),
     topic_diagnostics_max_freq_(1000.),
     topic_diagnostics_("image_raw", diagnostics_,
-		       diagnostic_updater::FrequencyStatusParam
-		       (&topic_diagnostics_min_freq_,
-			&topic_diagnostics_max_freq_, 0.1, 10),
-		       diagnostic_updater::TimeStampStatusParam())
-  {}
+               diagnostic_updater::FrequencyStatusParam
+               (&topic_diagnostics_min_freq_,
+            &topic_diagnostics_max_freq_, 0.1, 10),
+               diagnostic_updater::TimeStampStatusParam())
+  {
+    priv_nh_.param<float>( "output_rate_hz", output_rate_hz_, 0 ); // 0 to disable
+    ROS_INFO("%s: output rate=%.2fHz", ROS_PACKAGE_NAME, output_rate_hz_ );
+  }
 
   Camera1394Driver::~Camera1394Driver()
   {}
@@ -155,6 +158,8 @@ namespace camera1394_driver
             calibration_matches_ = true;
             newconfig.guid = camera_name_; // update configuration parameter
             retries_ = 0;
+            camera_time_ref_ = ros::Time::now();
+            output_frame_count_ = 1;
             success = true;
           }
       }
@@ -192,6 +197,7 @@ namespace camera1394_driver
     // seconds before getting to run.  So, we avoid acquiring the lock
     // if there is a reconfig() pending.
     bool do_sleep = true;
+
     if (!reconfiguring_)
       {
         boost::mutex::scoped_lock lock(mutex_);
@@ -202,17 +208,31 @@ namespace camera1394_driver
         do_sleep = (state_ == Driver::CLOSED);
         if (!do_sleep)                  // openCamera() succeeded?
           {
-            // driver is open, read the next image still holding lock
-            sensor_msgs::ImagePtr image(new sensor_msgs::Image);
-            if (read(image))
-              {
-                publish(image);
-                consecutive_read_errors_ = 0;
-              }
-            else if ( ++consecutive_read_errors_ > config_.max_consecutive_errors && config_.max_consecutive_errors > 0 )
+			float time_elapsed = ( ros::Time::now() - camera_time_ref_ ).toSec();
+
+            // If we need a new image to achieve the requested output 
+            // rate (or if disabled =0Hz) then read and publish the image. 
+            // Otherwise, just poll the camera without processing image data. 
+
+            if ( output_rate_hz_ > 0 && time_elapsed * output_rate_hz_ >= output_frame_count_ )
             {
-              ROS_WARN("reached %lu consecutive read errrors, disconnecting", consecutive_read_errors_ );
-              closeCamera();
+                sensor_msgs::ImagePtr image(new sensor_msgs::Image);
+                if ( read(image) ) 
+                { 
+                  publish(image); 
+                  consecutive_read_errors_ = 0; 
+                  ++output_frame_count_;
+                }
+                else if ( ++consecutive_read_errors_ > config_.max_consecutive_errors && config_.max_consecutive_errors > 0 )
+                {
+                  ROS_WARN("reached %lu consecutive read errrors, disconnecting", consecutive_read_errors_ );
+                  closeCamera();
+                }
+            }
+            else // poll camera without processing or publishing frame
+            {
+                try { dev_->pollNoRead(); }
+                catch( const std::exception& e ) { ROS_WARN_THROTTLE( 1, "Failed to poll camera, error=%s", e.what() ); } 
             }
           }
       } // release mutex lock
