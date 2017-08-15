@@ -47,6 +47,7 @@
  */
 
 #include <stdint.h>
+#include <poll.h>
 
 #include "yuv.h"
 #include <sensor_msgs/image_encodings.h>
@@ -454,21 +455,37 @@ bool Camera1394::readData(sensor_msgs::Image& image)
   ROS_ASSERT_MSG(camera_, "Attempt to read from camera that is not open.");
 
   dc1394video_frame_t * frame = NULL;
-  if (features_->isTriggerPowered())
-  {
-    ROS_DEBUG("[%016lx] polling camera", camera_->guid);
-    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_POLL, &frame);
-    if (!frame) return false;
+
+  // Before calling dc1394_capture_dequeue(), wait for data to be available
+  // using poll(). This allows a timeout so the process does not hang forever
+  // if the capture is not ready (e.g. in external trigger mode).
+  pollfd poll_info;
+  poll_info.fd = dc1394_capture_get_fileno(camera_);
+  poll_info.events = POLLIN;
+  const int timeout_milliseconds = 500;
+
+  ROS_DEBUG("[%016lx] waiting camera", camera_->guid);
+  // Block until ready to capture, timeout, or error
+  const int poll_result = poll(&poll_info, 1, timeout_milliseconds);
+
+  if (poll_result > 0 && poll_info.revents == POLLIN) {
+    // Ready to capture. This call won't block
+    dc1394_capture_dequeue(camera_, DC1394_CAPTURE_POLICY_WAIT, &frame);
+  } else if (poll_result == 0) {
+    ROS_DEBUG("[%016lx] poll timed out", camera_->guid);
+    // This is not an exception
+    return false;
+  } else if (poll_result < 0) {
+    ROS_DEBUG("[%016lx] poll error: %s", camera_->guid, strerror(errno));
+  } else {
+    ROS_DEBUG("[%016lx] poll reported error: %d", camera_->guid,
+              poll_info.revents);
   }
-  else
+
+  if (!frame)
   {
-    ROS_DEBUG("[%016lx] waiting camera", camera_->guid);
-    dc1394_capture_dequeue (camera_, DC1394_CAPTURE_POLICY_WAIT, &frame);
-    if (!frame)
-    {
-      CAM_EXCEPT(camera1394::Exception, "Unable to capture frame");
-      return false;
-    }
+    CAM_EXCEPT(camera1394::Exception, "Unable to capture frame");
+    return false;
   }
   
   uint8_t* capture_buffer;

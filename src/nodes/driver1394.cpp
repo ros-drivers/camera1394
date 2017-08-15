@@ -293,7 +293,7 @@ namespace camera1394_driver
         // Read data from the Camera
         ROS_DEBUG_STREAM("[" << camera_name_ << "] reading data");
         success = dev_->readData(*image);
-        ROS_DEBUG_STREAM("[" << camera_name_ << "] read returned");
+        ROS_DEBUG_STREAM("[" << camera_name_ << "] read returned " << success);
       }
     catch (camera1394::Exception& e)
       {
