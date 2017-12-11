@@ -49,6 +49,7 @@
 #include <stdint.h>
 
 #include "yuv.h"
+#include <cstdlib>
 #include <sensor_msgs/image_encodings.h>
 #include "dev_camera1394.h"
 #include "features.h"
