@@ -5,7 +5,6 @@ project(camera1394)
 find_package(catkin REQUIRED COMPONENTS
   camera_info_manager
   diagnostic_updater
-  driver_base
   dynamic_reconfigure
   image_transport
   message_generation
@@ -35,7 +34,7 @@ add_service_files(FILES
   GetCameraRegisters.srv
   SetCameraRegisters.srv)
 
-generate_messages(DEPENDENCIES std_msgs)
+generate_messages()
 
 # auto-generate dynamic reconfiguration GUI before catkin_package()
 generate_dynamic_reconfigure_options(cfg/Camera1394.cfg)

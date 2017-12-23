@@ -34,7 +34,6 @@
 
 #include <boost/format.hpp>
 
-#include <driver_base/SensorLevels.h>
 #include <tf/transform_listener.h>
 
 #include "driver1394.h"
@@ -63,8 +62,7 @@ namespace camera1394_driver
 {
   // some convenience typedefs
   typedef camera1394::Camera1394Config Config;
-  typedef driver_base::Driver Driver;
-  typedef driver_base::SensorLevels Levels;
+  typedef Camera1394Driver Driver;
 
   Camera1394Driver::Camera1394Driver(ros::NodeHandle priv_nh,
                                      ros::NodeHandle camera_nh):
@@ -209,9 +207,11 @@ namespace camera1394_driver
                 publish(image);
                 consecutive_read_errors_ = 0;
               }
-            else if ( ++consecutive_read_errors_ > config_.max_consecutive_errors && config_.max_consecutive_errors > 0 )
+            else if (++consecutive_read_errors_ > config_.max_consecutive_errors
+                     && config_.max_consecutive_errors > 0)
             {
-              ROS_WARN("reached %lu consecutive read errrors, disconnecting", consecutive_read_errors_ );
+              ROS_WARN("reached %u consecutive read errrors, disconnecting",
+                       consecutive_read_errors_ );
               closeCamera();
             }
           }
