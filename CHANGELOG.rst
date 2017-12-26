@@ -111,7 +111,7 @@ forthcoming
  * Add IIDC Format7 support (`#4222`_), thanks to Ken Tossell.
  * Format7 binning and ROI comply with REP 104.
  * Add Focus and Zoom feature support (`#4631`_), thanks to Jose Antonio
-   Álvarez Ruiz.
+   Alvarez Ruiz.
  * The driver will only set video_mode or frame_rate to values
    supported by the device.
  * Bayer decoding within the driver deprecated (`#4725`_). Prefer
