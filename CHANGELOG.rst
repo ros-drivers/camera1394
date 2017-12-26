@@ -1,8 +1,8 @@
 Change history
 ==============
 
-forthcoming
------------
+1.10.1 (2017-12-26)
+-------------------
 
  * Initial Kinetic release.
  * Reconnect to device after too many consecutive read errors.
