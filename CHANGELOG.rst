@@ -110,7 +110,7 @@ forthcoming
  * Add nodelet version of driver.
  * Add IIDC Format7 support (`#4222`_), thanks to Ken Tossell.
  * Format7 binning and ROI comply with REP 104.
- * Add Focus and Zoom feature support (`#4631`_), thanks to José Antonio
+ * Add Focus and Zoom feature support (`#4631`_), thanks to Jose Antonio
    Álvarez Ruiz.
  * The driver will only set video_mode or frame_rate to values
    supported by the device.
