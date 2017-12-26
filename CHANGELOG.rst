@@ -1,6 +1,15 @@
 Change history
 ==============
 
+forthcoming
+-----------
+
+ * Initial Kinetic release.
+ * Reconnect to device after too many consecutive read errors.
+ * Update to compile cleanly on Kinetic.
+ * Remove dependency on ``driver_base`` package (`#18_`).
+ * Contributors: Mikael Arguedas, Francois Chataigner, Jack O'Quin
+
 1.10.0 (2014-09-01)
 -------------------
 
@@ -140,6 +149,7 @@ Change history
 .. _`#10`: https://github.com/ros-drivers/camera1394/issues/10
 .. _`#11`: https://github.com/ros-drivers/camera1394/pull/11
 .. _`#15`: https://github.com/ros-drivers/camera1394/issues/15
+.. _`#18`: https://github.com/ros-drivers/camera1394/issues/18
 .. _`#29`: https://github.com/ros-drivers/camera1394/issues/29
 .. _`#32`: https://github.com/ros-drivers/camera1394/pull/32
 .. _`#33`: https://github.com/ros-drivers/camera1394/issues/33
