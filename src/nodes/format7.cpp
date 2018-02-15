@@ -40,7 +40,7 @@
 
  */
 
-#include <stdint.h>
+#include <cstdlib>
 #include "yuv.h"
 #include <cstdlib>
 #include <sensor_msgs/image_encodings.h>

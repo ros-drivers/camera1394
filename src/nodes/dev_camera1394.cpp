@@ -46,7 +46,7 @@
 
  */
 
-#include <stdint.h>
+#include <cstdlib>
 
 #include "yuv.h"
 #include <cstdlib>
