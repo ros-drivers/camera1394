@@ -278,7 +278,7 @@ void Features::reconfigure(Config *newconfig)
  *  represent all possible option values accurately.
  */
 void Features::configure(dc1394feature_t feature, int *control,
-                         double *value, double *value2)
+                         int *value, int *value2)
 {
   // device-relevant information for this feature
   dc1394feature_info_t *finfo =
@@ -314,37 +314,7 @@ void Features::configure(dc1394feature_t feature, int *control,
           break;
         }
 
-      // TODO: break this into some internal methods
-      if (finfo->absolute_capable && finfo->abs_control)
-        {
-          // supports reading and setting float value
-          float fmin, fmax;
-          if (DC1394_SUCCESS ==
-              dc1394_feature_get_absolute_boundaries(camera_, feature,
-                                                     &fmin, &fmax))
-            {
-              // clamp *value between minimum and maximum
-              if (*value < fmin)
-                *value = (double) fmin;
-              else if (*value > fmax)
-                *value = (double) fmax;
-            }
-          else
-            {
-              ROS_WARN_STREAM("failed to get feature "
-                              << featureName(feature) << " boundaries ");
-            }
-
-          // @todo handle absolute White Balance values
-          float fval = *value;
-          if (DC1394_SUCCESS !=
-              dc1394_feature_set_absolute_value(camera_, feature, fval))
-            {
-              ROS_WARN_STREAM("failed to set feature "
-                              << featureName(feature) << " to " << fval);
-            }
-        }
-      else // no float representation
+      // no float representation
         {
           // round requested value to nearest integer
           *value = rint(*value);
@@ -479,7 +449,7 @@ Features::state_t Features::getState(dc1394feature_info_t *finfo)
  *               for white balance.  Otherwise NULL.
  */
 void Features::getValues(dc1394feature_info_t *finfo,
-                           double *value, double *value2)
+                           int *value, int *value2)
 {
   dc1394feature_t feature = finfo->id;
   dc1394error_t rc;
@@ -494,13 +464,6 @@ void Features::getValues(dc1394feature_info_t *finfo,
   if (feature == DC1394_FEATURE_WHITE_BALANCE)
     {
       // handle White Balance separately, it has two components
-      if (finfo->absolute_capable && finfo->abs_control)
-        {
-          // supports reading and setting float value
-          // @todo get absolute White Balance values
-          rc = DC1394_FUNCTION_NOT_SUPPORTED;
-        }
-      else
         {
           // get integer White Balance values
           uint32_t bu_val;
@@ -528,17 +491,7 @@ void Features::getValues(dc1394feature_info_t *finfo,
   else
     {
       // other features only have one component
-      if (finfo->absolute_capable && finfo->abs_control)
-        {
-          // supports reading and setting float value
-          float fval;
-          rc = dc1394_feature_get_absolute_value(camera_, feature, &fval);
-          if (DC1394_SUCCESS == rc)
-            {
-              *value = fval;                // convert to double
-            }
-        }
-      else // no float representation
+      // no float representation
         {
           uint32_t ival;
           rc = dc1394_feature_get_value(camera_, feature, &ival);
@@ -641,7 +594,7 @@ void Features::setPower(dc1394feature_info_t *finfo, dc1394switch_t on_off)
  */
 void Features::updateIfChanged(dc1394feature_t feature,
                                int old_control, int *control,
-                               double old_value, double *value)
+                               int old_value, int *value)
 {
   if ((old_control != *control) || (old_value != *value))
     {
@@ -668,8 +621,8 @@ void Features::updateIfChanged(dc1394feature_t feature,
  */
 void Features::updateIfChanged(dc1394feature_t feature,
                                int old_control, int *control,
-                               double old_value, double *value,
-                               double old_value2, double *value2)
+                               int old_value, int *value,
+                               int old_value2, int *value2)
 {
   if ((old_control != *control)
       || (old_value != *value)
