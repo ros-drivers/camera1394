@@ -59,16 +59,16 @@
 //! Macro for throwing an exception with a message
 #define CAM_EXCEPT(except, msg)					\
   {								\
-    char buf[100];						\
-    snprintf(buf, 100, "[Camera1394::%s]: " msg, __FUNCTION__); \
+    char buf[200];						\
+    snprintf(buf, 200, "[Camera1394::%s]: " msg, __FUNCTION__); \
     throw except(buf);						\
   }
 
 //! Macro for throwing an exception with a message, passing args
 #define CAM_EXCEPT_ARGS(except, msg, ...)				\
   {									\
-    char buf[100];							\
-    snprintf(buf, 100, "[Camera1394::%s]: " msg, __FUNCTION__, __VA_ARGS__); \
+    char buf[200];							\
+    snprintf(buf, 200, "[Camera1394::%s]: " msg, __FUNCTION__, __VA_ARGS__); \
     throw except(buf);							\
   }
 
